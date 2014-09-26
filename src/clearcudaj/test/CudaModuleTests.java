@@ -5,8 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 import java.io.IOException;
 
-import jcuda.driver.JCudaDriver;
-
 import org.junit.Test;
 
 import clearcudaj.CudaComputeCapability;
@@ -22,7 +20,7 @@ public class CudaModuleTests
 	@Test
 	public void test() throws IOException
 	{
-		JCudaDriver.setExceptionsEnabled(true);
+
 
 		CudaDevice lCudaDevice = new CudaDevice(0);
 		CudaComputeCapability lComputeCapability = lCudaDevice.getComputeCapability();

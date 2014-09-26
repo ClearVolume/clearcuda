@@ -10,14 +10,16 @@ import static jcuda.driver.JCudaDriver.cuDeviceTotalMem;
 import static jcuda.driver.JCudaDriver.cuInit;
 import jcuda.driver.CUdevice;
 import jcuda.driver.CUdevprop;
+import jcuda.driver.JCudaDriver;
 
-public class CudaDevice
+public class CudaDevice implements CudaCloseable
 {
 	private final CUdevice mCUdevice = new CUdevice();
 
 	public CudaDevice(int pOrdinal)
 	{
 		super();
+		JCudaDriver.setExceptionsEnabled(true);
 		cuInit(0);
 		cuDeviceGet(mCUdevice, pOrdinal);
 	}
@@ -88,6 +90,12 @@ public class CudaDevice
 						+ ", getTotalMem()="
 						+ getTotalMem()
 						+ "]";
+	}
+
+	@Override
+	public void close()
+	{
+		
 	}
 
 }

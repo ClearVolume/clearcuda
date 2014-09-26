@@ -56,7 +56,7 @@ public class CudaModule implements CudaCloseable
 		return lCudaSurface;
 	}
 
-	public CudaDevicePointer getGlobal(String pGlobalName, int pSizeInBytes)
+	public CudaDevicePointer getGlobal(String pGlobalName)
 	{
 		CudaDevicePointer lCudaGlobal = new CudaGlobal(this, pGlobalName);
 		return lCudaGlobal;

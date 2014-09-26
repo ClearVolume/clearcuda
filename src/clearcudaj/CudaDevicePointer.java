@@ -1,8 +1,8 @@
 package clearcudaj;
 
 import static jcuda.driver.JCudaDriver.cuCtxSynchronize;
-import static jcuda.driver.JCudaDriver.cuMemcpyDtoH;
-import static jcuda.driver.JCudaDriver.cuMemcpyHtoD;
+import static jcuda.driver.JCudaDriver.cuMemcpyDtoHAsync;
+import static jcuda.driver.JCudaDriver.cuMemcpyHtoDAsync;
 import static jcuda.driver.JCudaDriver.cuMemsetD16Async;
 import static jcuda.driver.JCudaDriver.cuMemsetD32Async;
 import static jcuda.driver.JCudaDriver.cuMemsetD8Async;
@@ -22,14 +22,54 @@ public class CudaDevicePointer implements CudaCloseable
 		mCUdeviceptr = new CUdeviceptr();
 	}
 
-	public void copyFrom(Pointer pPointerToHostMemory)
+	public void setFloat(float pFloat)
 	{
-		cuMemcpyHtoD(mCUdeviceptr, pPointerToHostMemory, getSizeInBytes());
+		copyFrom(Pointer.to(new float[]
+		{ pFloat }), true);
 	}
 
-	public void copyTo(Pointer pPointerToHostMemory)
+	public void setDouble(double pDouble)
 	{
-		cuMemcpyDtoH(pPointerToHostMemory, mCUdeviceptr, getSizeInBytes());
+		copyFrom(Pointer.to(new double[]
+		{ pDouble }), true);
+	}
+
+	public void setInt(int pInt)
+	{
+		copyFrom(Pointer.to(new int[]
+		{ pInt }), true);
+	}
+
+	public void setLong(long pLong)
+	{
+		copyFrom(Pointer.to(new long[]
+		{ pLong }), true);
+	}
+
+	public void copyFloatsFrom(float[] pFloatsArray, boolean pSync)
+	{
+		Pointer lPointer = Pointer.to(pFloatsArray);
+		copyFrom(lPointer, pSync);
+	}
+
+	public void copyFrom(Pointer pPointerToHostMemory, boolean pSync)
+	{
+		cuMemcpyHtoDAsync(mCUdeviceptr,
+											pPointerToHostMemory,
+											getSizeInBytes(),
+											null);/**/
+		if (pSync)
+			cuCtxSynchronize();
+	}
+
+	public void copyTo(Pointer pPointerToHostMemory, boolean pSync)
+	{
+		cuMemcpyDtoHAsync(pPointerToHostMemory,
+											mCUdeviceptr,
+											getSizeInBytes(),
+											null);
+		if (pSync)
+			cuCtxSynchronize();
 	}
 
 	public void set(int pValue, boolean pSync)
@@ -66,7 +106,7 @@ public class CudaDevicePointer implements CudaCloseable
 	@Override
 	public void close() throws CudaException
 	{
-	
+
 	}
 
 	@Override

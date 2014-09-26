@@ -3,8 +3,8 @@ package clearcudaj;
 public class CudaComputeCapability
 {
 
-	private int mMajor;
-	private int mMinor;
+	private final int mMajor;
+	private final int mMinor;
 
 	public CudaComputeCapability(int pMajor, int pMinor)
 	{
@@ -15,10 +15,20 @@ public class CudaComputeCapability
 	@Override
 	public String toString()
 	{
-		return "CudaComputeCapability [mMajor=" + mMajor
+		return "CudaComputeCapability [mMajor=" + getMajor()
 						+ ", mMinor="
-						+ mMinor
+						+ getMinor()
 						+ "]";
+	}
+
+	public int getMajor()
+	{
+		return mMajor;
+	}
+
+	public int getMinor()
+	{
+		return mMinor;
 	}
 
 }

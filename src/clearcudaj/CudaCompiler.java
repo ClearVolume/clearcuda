@@ -35,9 +35,15 @@ public class CudaCompiler
 	private static final File cCompilationRootFolder = new File(System.getProperty("user.home"),
 																															".clearcudaj");
 
+
+	private CudaDevice mCudaDevice;
+
 	private MessageDigest mMessageDigest;
 	private final String mCompilationUnitName;
 	private final File mCompilationFolder;
+
+	private static int mOptimizationLevel = 3;
+	private static boolean mUseFastMath = true;
 
 	private final Map<String, String> mKeyValueMap = new HashMap<String, String>();
 
@@ -45,9 +51,11 @@ public class CudaCompiler
 
 	private volatile File mPTXFile;
 
-	public CudaCompiler(String pCompilationUnitName)
+	public CudaCompiler(CudaDevice pCudaDevice,
+											String pCompilationUnitName)
 	{
 		super();
+		mCudaDevice = pCudaDevice;
 		mCompilationUnitName = pCompilationUnitName;
 
 		mCompilationFolder = new File(cCompilationRootFolder,
@@ -68,6 +76,18 @@ public class CudaCompiler
 	public void setParameter(String pKey, String pValue)
 	{
 		mKeyValueMap.put(pKey, pValue);
+	}
+
+	public ArrayList<File> addFiles(Class<?> pRootClass,
+																	String... pRessourcePaths) throws IOException
+	{
+		ArrayList<File> lFileList = new ArrayList<File>();
+		for (String lResourcePath : pRessourcePaths)
+		{
+			File lFile = addFile(pRootClass, lResourcePath);
+			lFileList.add(lFile);
+		}
+		return lFileList;
 	}
 
 	public File addFile(Class<?> pClass, String pRessourcePath) throws IOException
@@ -106,9 +126,13 @@ public class CudaCompiler
 																							lHashPrefix + ".ptx"));
 
 		if (mPTXFile.exists())
+		{
+			System.out.format("PTX already compiled, using the cached version (%s) ",
+												mPTXFile.getName());
 			return mPTXFile;
+		}
 
-		compile(pPrimaryFile, getPTXFile());
+		compile(mCudaDevice, pPrimaryFile, getPTXFile());
 
 		return getPTXFile();
 	}
@@ -141,7 +165,7 @@ public class CudaCompiler
 			long lFileHash = computeFileHash(lFile);
 			lFilesHash += lFileHash;
 		}
-		return lFilesHash;
+		return abs(lFilesHash);
 	}
 
 	private long computeFileHash(File pFile) throws FileNotFoundException,
@@ -165,6 +189,13 @@ public class CudaCompiler
 
 	public static void compile(final File pCUFile, final File pPTXFile) throws IOException
 	{
+		compile(null, pCUFile, pPTXFile);
+	}
+
+	public static void compile(	CudaDevice pCudaDevice,
+															final File pCUFile,
+															final File pPTXFile) throws IOException
+	{
 
 		if (!pCUFile.exists())
 		{
@@ -182,11 +213,30 @@ public class CudaCompiler
 		final String lBinDirOption = "";/*String.format(	"--compiler-bindir=%s",
 																								lCPPCompilerAbsPath);/**/
 
-		final String lCommand = String.format("%s  -I. -I %s %s %s -ptx %s -o %s",
+		String lArchitectureString = "";
+		if (pCudaDevice != null)
+		{
+			CudaComputeCapability lComputeCapability = pCudaDevice.getComputeCapability();
+			lArchitectureString = String.format("-arch=compute_%d%d -code=sm_%d%d",
+																					lComputeCapability.getMajor(),
+																					lComputeCapability.getMinor(),
+																					lComputeCapability.getMajor(),
+																					lComputeCapability.getMinor());
+		}
+
+		String lOptimizationLevel = "-O" + mOptimizationLevel;
+
+		String lFastMathString = mUseFastMath	? "--use_fast_math --prec-div=true --prec-sqrt=true"
+																					: "";
+
+		final String lCommand = String.format("%s  -I. -I %s %s %s %s %s %s -ptx %s -o %s",
 																					lNVCCAbsPath,
 																					lCUFileFolderAbsPath,
 																					lModelString,
 																					lBinDirOption,
+																					lArchitectureString,
+																					lOptimizationLevel,
+																					lFastMathString,
 																					lCUFileAbsPath,
 																					lPTXFileAbsPath);
 

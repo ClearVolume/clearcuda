@@ -1,12 +1,14 @@
 package clearcudaj;
 
+import static jcuda.driver.JCudaDriver.CU_PARAM_TR_DEFAULT;
 import static jcuda.driver.JCudaDriver.cuLaunchKernel;
 import static jcuda.driver.JCudaDriver.cuModuleGetFunction;
+import static jcuda.driver.JCudaDriver.cuParamSetTexRef;
 import jcuda.NativePointerObject;
 import jcuda.Pointer;
 import jcuda.driver.CUfunction;
 
-public class CudaFunction implements Runnable
+public class CudaFunction
 {
 
 	private final String mFunctionName;
@@ -15,23 +17,41 @@ public class CudaFunction implements Runnable
 	private int mGridDimX, mGridDimY, mGridDimZ, mBlockDimX,
 			mBlockDimY, mBlockDimZ, mSharedMemoryBytes;
 
-
-
 	protected CudaFunction(CUfunction pCUfunction, String pFunctionName)
 	{
 		mCUfunction = pCUfunction;
 		mFunctionName = pFunctionName;
 	}
 
-	public CudaFunction(CudaModule pCudaModule,
-											String pFunctionName)
+	public CudaFunction(CudaModule pCudaModule, String pFunctionName)
 	{
 		mFunctionName = pFunctionName;
 		mCUfunction = new CUfunction();
 		int lCuModuleGetFunction = cuModuleGetFunction(	mCUfunction,
-												pCudaModule.getPeer(),
-												pFunctionName);
+																										pCudaModule.getPeer(),
+																										pFunctionName);
 		System.out.println(lCuModuleGetFunction);
+	}
+
+	public void setGridDim(int... pGridDim)
+	{
+		mGridDimX = pGridDim[0];
+		mGridDimY = pGridDim[1];
+		mGridDimZ = pGridDim[2];
+	}
+
+	public void setBlockDim(int... pBlockDim)
+	{
+		mBlockDimX = pBlockDim[0];
+		mBlockDimY = pBlockDim[1];
+		mBlockDimZ = pBlockDim[2];
+	}
+
+	public void setTexture(CudaTextureReference pCudaTextureReference)
+	{
+		cuParamSetTexRef(	getPeer(),
+											CU_PARAM_TR_DEFAULT,
+											pCudaTextureReference.getPeer());
 	}
 
 	public int launch(Object... pParameters)
@@ -40,10 +60,34 @@ public class CudaFunction implements Runnable
 		NativePointerObject[] lNativePointerObjectArray = new NativePointerObject[lNumberOfParameters];
 		for (int i = 0; i < lNumberOfParameters; i++)
 		{
-			Pointer lParameterPointer = convertParameter(pParameters[i]);
+			NativePointerObject lParameterPointer = convertParameter(pParameters[i]);
 			lNativePointerObjectArray[i] = lParameterPointer;
 		}
 		Pointer lKernerlParametersPointer = Pointer.to(lNativePointerObjectArray);
+
+		/*
+		Pointer.to(Pointer.to(a,b,c)
+		
+		mCUdeviceptr),
+								Pointer.to(new int[]
+								{ getTextureWidth() }),
+								Pointer.to(new int[]
+								{ getTextureHeight() }),
+								Pointer.to(new float[]
+								{ (float) getScaleX() }),
+								Pointer.to(new float[]
+								{ (float) getScaleY() }),
+								Pointer.to(new float[]
+								{ (float) getScaleZ() }),
+								Pointer.to(new float[]
+								{ (float) getBrightness() }),
+								Pointer.to(new float[]
+								{ (float) getTransferRangeMin() }),
+								Pointer.to(new float[]
+								{ (float) getTransferRangeMax() }),
+								Pointer.to(new float[]
+								{ (float) getGamma() }));
+		/**/
 
 		return cuLaunchKernel(getPeer(),
 													mGridDimX,
@@ -58,8 +102,10 @@ public class CudaFunction implements Runnable
 													null);
 	}
 
-	private Pointer convertParameter(Object pObject)
+	private NativePointerObject convertParameter(Object pObject)
 	{
+		if (pObject instanceof CudaDevicePointer)
+			return Pointer.to(((CudaDevicePointer) pObject).getPeer());
 		if (pObject instanceof Byte)
 			return Pointer.to(new byte[]
 			{ (byte) pObject });
@@ -84,11 +130,6 @@ public class CudaFunction implements Runnable
 		return null;
 	}
 
-	@Override
-	public void run()
-	{
-
-	}
 
 	public CUfunction getPeer()
 	{

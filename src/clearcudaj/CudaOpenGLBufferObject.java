@@ -6,31 +6,31 @@ import static jcuda.driver.JCudaDriver.cuGLUnmapBufferObject;
 import static jcuda.driver.JCudaDriver.cuGLUnregisterBufferObject;
 import jcuda.CudaException;
 
-public class CudaGlBufferObject extends CudaDevicePointer
+public class CudaOpenGLBufferObject extends CudaDevicePointer
 {
 
 	private final int mPixelBufferObjectId;
 
-	public CudaGlBufferObject(int pPixelBufferObjectId)
+	public CudaOpenGLBufferObject(int pPixelBufferObjectId)
 	{
 		super();
 		mPixelBufferObjectId = pPixelBufferObjectId;
 		cuGLRegisterBufferObject(mPixelBufferObjectId);
 	}
 
-
 	public void map()
 	{
-		cuGLMapBufferObject(mCUdeviceptr,
-												new long[1],
+		long[] lSizeInBytes = new long[1];
+		cuGLMapBufferObject(getPeer(),
+												lSizeInBytes,
 												mPixelBufferObjectId);
+		mSizeInBytes = lSizeInBytes[0];
 	}
 
 	public void unmap()
 	{
 		cuGLUnmapBufferObject(mPixelBufferObjectId);
 	}
-
 
 	@Override
 	public void close() throws CudaException

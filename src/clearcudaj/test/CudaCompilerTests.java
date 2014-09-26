@@ -5,8 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 import java.io.IOException;
 
-import jcuda.driver.JCudaDriver;
-
 import org.junit.Test;
 
 import clearcudaj.CudaCompiler;
@@ -17,7 +15,6 @@ public class CudaCompilerTests
 	@Test
 	public void test() throws IOException
 	{
-		JCudaDriver.setExceptionsEnabled(true);
 
 		File lPTX = getPTX();
 
@@ -28,7 +25,7 @@ public class CudaCompilerTests
 
 	public static final File getPTX() throws IOException
 	{
-		CudaCompiler lCUDACompiler = new CudaCompiler("test");
+		CudaCompiler lCUDACompiler = new CudaCompiler(null, "test");
 
 		lCUDACompiler.setParameter("funcname", "bozo");
 

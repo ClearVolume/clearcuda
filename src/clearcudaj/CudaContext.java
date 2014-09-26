@@ -54,7 +54,7 @@ public class CudaContext implements CudaCloseable
 	{
 		setCurrent();
 		cuCtxSynchronize();
-		cuCtxSetCurrent(null);
+		// cuCtxSetCurrent(null);
 	}
 
 	public CUcontext getPeer()

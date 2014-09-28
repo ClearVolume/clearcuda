@@ -8,17 +8,20 @@ import static jcuda.driver.JCudaDriver.cuCtxSynchronize;
 import static jcuda.driver.JCudaDriver.cuGLCtxCreate;
 import jcuda.CudaException;
 import jcuda.driver.CUcontext;
+import jcuda.driver.CUctx_flags;
 
 public class CudaContext implements CudaCloseable
 {
 	private CUcontext mCUcontext = new CUcontext();
 	private final CudaDevice mCudaDevice;
+	private boolean mEnableHostMapping = true;
 
 	public CudaContext(CudaDevice pCudaDevice)
 	{
 		super();
 		mCudaDevice = pCudaDevice;
-		cuGLCtxCreate(mCUcontext, 0, pCudaDevice.getPeer());
+		int lFlags = mEnableHostMapping ? CUctx_flags.CU_CTX_MAP_HOST : 0;
+		cuGLCtxCreate(mCUcontext, lFlags, pCudaDevice.getPeer());
 	}
 
 	@Override

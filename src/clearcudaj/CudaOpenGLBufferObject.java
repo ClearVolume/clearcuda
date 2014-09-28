@@ -13,7 +13,7 @@ public class CudaOpenGLBufferObject extends CudaDevicePointer
 
 	public CudaOpenGLBufferObject(int pPixelBufferObjectId)
 	{
-		super();
+		super(true);
 		mPixelBufferObjectId = pPixelBufferObjectId;
 		cuGLRegisterBufferObject(mPixelBufferObjectId);
 	}

@@ -43,8 +43,7 @@ public class NVCC
 			if (SystemUtils.IS_OS_MAC_OSX)
 				pRootFolder = new File("/Developer/");
 			else if (SystemUtils.IS_OS_WINDOWS)
-				pRootFolder = new File(System.getenv("ProgramFiles"));// new
-																															// File("\"C:/Program Files/NVIDIA GPU Computing Toolkit\"");
+				pRootFolder = new File(System.getenv("ProgramFiles"));
 			else if (SystemUtils.IS_OS_LINUX)
 			{
 				File lFindNVCC = find("/usr/local");
@@ -71,6 +70,7 @@ public class NVCC
 				if (pFile.toFile().getName().equals("nvcc"))
 				{
 					sFoundPath = pFile;
+					System.out.println("Found NVCC at: " + sFoundPath);
 					return FileVisitResult.TERMINATE;
 				}
 				return FileVisitResult.CONTINUE;

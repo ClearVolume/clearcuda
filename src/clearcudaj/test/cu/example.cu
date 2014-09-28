@@ -1,14 +1,12 @@
-#define N (1024*1024)
-#define M (1000000)
 
 #include "helper_math.h"
 
-extern "C" __global__ void funcname(float *a, float *b, float *c)
+extern "C" __global__ void funcname(int length, float *a, float *b, float *c)
 {
-	int id = blockIdx.x;
-	if (id < N)
+  const int x = blockIdx.x*blockDim.x + threadIdx.x;
+	if (x < length)
 	{
-		c[id] = a[id] + b[id];
+		c[x] = a[x] + b[x];
 	}
 }
 

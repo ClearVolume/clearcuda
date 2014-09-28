@@ -226,7 +226,7 @@ public class CudaCompiler
 
 		String lOptimizationLevel = "-O" + mOptimizationLevel;
 
-		String lFastMathString = mUseFastMath	? "--use_fast_math --prec-div=true --prec-sqrt=true"
+		String lFastMathString = mUseFastMath ? "--use_fast_math"
 																					: "";
 
 		final String lCommand = String.format("%s  -I. -I %s %s %s %s %s %s -ptx %s -o %s",

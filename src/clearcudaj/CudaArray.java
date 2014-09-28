@@ -1,14 +1,12 @@
 package clearcudaj;
 
+import static jcuda.driver.JCudaDriver.CUDA_ARRAY3D_SURFACE_LDST;
 import static jcuda.driver.JCudaDriver.cuArray3DCreate;
 import static jcuda.driver.JCudaDriver.cuArrayCreate;
 import static jcuda.driver.JCudaDriver.cuArrayDestroy;
 import static jcuda.driver.JCudaDriver.cuCtxSynchronize;
 import static jcuda.driver.JCudaDriver.cuMemcpy2D;
 import static jcuda.driver.JCudaDriver.cuMemcpy3D;
-
-import java.nio.ByteBuffer;
-
 import jcuda.CudaException;
 import jcuda.Pointer;
 import jcuda.driver.CUDA_ARRAY3D_DESCRIPTOR;
@@ -18,9 +16,8 @@ import jcuda.driver.CUDA_MEMCPY3D;
 import jcuda.driver.CUarray;
 import jcuda.driver.CUarray_format;
 import jcuda.driver.CUmemorytype;
-import clearcudaj.utils.JCudaPointerUtils;
 
-public class CudaArray implements CudaCloseable
+public class CudaArray implements CudaCloseable, CopyFromToInterface
 {
 
 	private final CUarray mCUarray;
@@ -32,6 +29,7 @@ public class CudaArray implements CudaCloseable
 	private final boolean mFloat;
 	private final boolean mSigned;
 	private final int mFormat;
+	private final boolean mSurfaceEnabled;
 
 	public CudaArray(	long pNumberOfChannels,
 										long pWidth,
@@ -39,7 +37,8 @@ public class CudaArray implements CudaCloseable
 										long pDepth,
 										int pBytesPerChannel,
 										boolean pFloat,
-										boolean pSigned)
+										boolean pSigned,
+										boolean pEnableSurface)
 	{
 		super();
 		mNumberOfChannels = pNumberOfChannels;
@@ -49,6 +48,7 @@ public class CudaArray implements CudaCloseable
 		mBytesPerChannel = pBytesPerChannel;
 		mFloat = pFloat;
 		mSigned = pSigned;
+		mSurfaceEnabled = pEnableSurface;
 		mFormat = getFormat(pBytesPerChannel, pFloat, pSigned);
 
 		mCUarray = new CUarray();
@@ -69,6 +69,8 @@ public class CudaArray implements CudaCloseable
 			lAllocate3DArrayDescriptor.Depth = pDepth;
 			lAllocate3DArrayDescriptor.Format = mFormat;
 			lAllocate3DArrayDescriptor.NumChannels = (int) pNumberOfChannels;
+			if (pEnableSurface)
+				lAllocate3DArrayDescriptor.Flags = CUDA_ARRAY3D_SURFACE_LDST;
 			cuArray3DCreate(mCUarray, lAllocate3DArrayDescriptor);
 		}
 		cuCtxSynchronize();
@@ -178,34 +180,9 @@ public class CudaArray implements CudaCloseable
 		return mSigned;
 	}
 
-	public void copyFloatsFrom(float[] pFloatArray, boolean pSync)
-	{
-		Pointer lPointer = Pointer.to(pFloatArray);
-		copyFrom(lPointer, pSync);
-	}
 
-	public void copyFrom(long pNativeAddress, boolean pSync)
-	{
-		Pointer lPointer = JCudaPointerUtils.create(pNativeAddress);
-		copyFrom(lPointer, pSync);
-	}
 
-	public void copyTo(long pNativeAddress, boolean pSync)
-	{
-		Pointer lPointer = JCudaPointerUtils.create(pNativeAddress);
-		copyTo(lPointer, pSync);
-	}
-
-	public void copyFrom(ByteBuffer pByteBuffer, boolean pSync)
-	{
-		copyFrom(Pointer.to(pByteBuffer), pSync);
-	}
-
-	public void copyTo(ByteBuffer pByteBuffer, boolean pSync)
-	{
-		copyTo(Pointer.to(pByteBuffer), pSync);
-	}
-
+	@Override
 	public void copyFrom(Pointer pPointer, boolean pSync)
 	{
 		if (getDepth() == 1)
@@ -215,8 +192,10 @@ public class CudaArray implements CudaCloseable
 			lCudaMemCopySpecification.srcHost = pPointer;
 			lCudaMemCopySpecification.srcPitch = getWidth() * getBytesPerChannel()
 																						* getNumberOfChannels();
+
 			lCudaMemCopySpecification.dstMemoryType = CUmemorytype.CU_MEMORYTYPE_ARRAY;
 			lCudaMemCopySpecification.dstArray = mCUarray;
+
 			lCudaMemCopySpecification.WidthInBytes = getWidth() * getBytesPerChannel()
 																								* getNumberOfChannels();
 			lCudaMemCopySpecification.Height = getHeight();
@@ -226,15 +205,18 @@ public class CudaArray implements CudaCloseable
 		else
 		{
 			final CUDA_MEMCPY3D lCudaMemCopySpecification = new CUDA_MEMCPY3D();
+
 			lCudaMemCopySpecification.srcMemoryType = CUmemorytype.CU_MEMORYTYPE_HOST;
 			lCudaMemCopySpecification.srcHost = pPointer;
 			lCudaMemCopySpecification.srcPitch = getWidth() * getBytesPerChannel()
 																						* getNumberOfChannels();
 			lCudaMemCopySpecification.srcHeight = getHeight();
+
 			lCudaMemCopySpecification.dstMemoryType = CUmemorytype.CU_MEMORYTYPE_ARRAY;
 			lCudaMemCopySpecification.dstArray = mCUarray;
 			lCudaMemCopySpecification.dstPitch = getWidth() * getBytesPerChannel();
 			lCudaMemCopySpecification.dstHeight = getHeight();
+
 			lCudaMemCopySpecification.WidthInBytes = getWidth() * getBytesPerChannel()
 																								* getNumberOfChannels();
 			lCudaMemCopySpecification.Height = getHeight();
@@ -247,18 +229,19 @@ public class CudaArray implements CudaCloseable
 			cuCtxSynchronize();
 	}
 
+	@Override
 	public void copyTo(Pointer pPointer, boolean pSync)
 	{
 		if (getDepth() == 1)
 		{
 			final CUDA_MEMCPY2D lCudaMemCopySpecification = new CUDA_MEMCPY2D();
 			lCudaMemCopySpecification.srcMemoryType = CUmemorytype.CU_MEMORYTYPE_ARRAY;
+			lCudaMemCopySpecification.srcArray = mCUarray;
 			lCudaMemCopySpecification.srcPitch = getWidth() * getBytesPerChannel()
 																						* getNumberOfChannels();
 
-			lCudaMemCopySpecification.dstHost = pPointer;
 			lCudaMemCopySpecification.dstMemoryType = CUmemorytype.CU_MEMORYTYPE_HOST;
-			lCudaMemCopySpecification.dstArray = mCUarray;
+			lCudaMemCopySpecification.dstHost = pPointer;
 
 			lCudaMemCopySpecification.WidthInBytes = getWidth() * getBytesPerChannel()
 																								* getNumberOfChannels();
@@ -271,13 +254,13 @@ public class CudaArray implements CudaCloseable
 			final CUDA_MEMCPY3D lCudaMemCopySpecification = new CUDA_MEMCPY3D();
 
 			lCudaMemCopySpecification.srcMemoryType = CUmemorytype.CU_MEMORYTYPE_ARRAY;
+			lCudaMemCopySpecification.srcArray = mCUarray;
 			lCudaMemCopySpecification.srcPitch = getWidth() * getBytesPerChannel()
 																						* getNumberOfChannels();
 			lCudaMemCopySpecification.srcHeight = getHeight();
 
-			lCudaMemCopySpecification.dstHost = pPointer;
 			lCudaMemCopySpecification.dstMemoryType = CUmemorytype.CU_MEMORYTYPE_HOST;
-			lCudaMemCopySpecification.dstArray = mCUarray;
+			lCudaMemCopySpecification.dstHost = pPointer;
 			lCudaMemCopySpecification.dstPitch = getWidth() * getBytesPerChannel()
 																						* getNumberOfChannels();
 			lCudaMemCopySpecification.dstHeight = getHeight();
@@ -316,6 +299,11 @@ public class CudaArray implements CudaCloseable
 						+ ", mSigned="
 						+ isSigned()
 						+ "]";
+	}
+
+	public boolean isSurfaceEnabled()
+	{
+		return mSurfaceEnabled;
 	}
 
 }

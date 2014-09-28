@@ -1,6 +1,7 @@
 package clearcudaj;
 
 import static jcuda.driver.JCudaDriver.cuModuleGetSurfRef;
+import static jcuda.driver.JCudaDriver.cuSurfRefSetArray;
 import jcuda.driver.CUsurfref;
 
 public class CudaSurfaceReference
@@ -9,7 +10,6 @@ public class CudaSurfaceReference
 	private final CUsurfref mCUsurfref = new CUsurfref();
 	private final String mSurfaceName;
 
-
 	public CudaSurfaceReference(CudaModule pCudaModule,
 															String pSurfaceName)
 	{
@@ -17,6 +17,11 @@ public class CudaSurfaceReference
 		cuModuleGetSurfRef(	mCUsurfref,
 												pCudaModule.getPeer(),
 												pSurfaceName);
+	}
+
+	public void setTo(CudaArray pCudaArray)
+	{
+		cuSurfRefSetArray(mCUsurfref, pCudaArray.getPeer(), 0);
 	}
 
 	public CUsurfref getPeer()
@@ -34,5 +39,6 @@ public class CudaSurfaceReference
 	{
 		return "CudaSurfaceReference [mSurfaceName=" + mSurfaceName + "]";
 	}
+
 
 }

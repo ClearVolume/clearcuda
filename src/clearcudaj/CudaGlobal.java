@@ -7,7 +7,7 @@ public class CudaGlobal extends CudaDevicePointer
 
 	public CudaGlobal(CudaModule pCudaModule, String pGlobalName)
 	{
-		super();
+		super(true);
 		long[] lArrayOfLong = new long[1];
 		cuModuleGetGlobal(getPeer(),
 											lArrayOfLong,

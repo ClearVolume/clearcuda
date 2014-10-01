@@ -22,7 +22,7 @@ public class CudaArrayTests
 		int lLength = (int) (lChannels * lWidth * lHeight * lDepth);
 
 		try (CudaDevice lCudaDevice = new CudaDevice(0);
-				CudaContext lCudaContext = new CudaContext(lCudaDevice);
+				CudaContext lCudaContext = new CudaContext(lCudaDevice, false);
 				CudaArray lCudaArray = new CudaArray(	lChannels,
 																							lWidth,
 																							lHeight,

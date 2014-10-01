@@ -1,5 +1,6 @@
 package clearcuda;
 
+import static jcuda.driver.JCudaDriver.cuCtxCreate;
 import static jcuda.driver.JCudaDriver.cuCtxDestroy;
 import static jcuda.driver.JCudaDriver.cuCtxPopCurrent;
 import static jcuda.driver.JCudaDriver.cuCtxPushCurrent;
@@ -14,14 +15,17 @@ public class CudaContext implements CudaCloseable
 {
 	private CUcontext mCUcontext = new CUcontext();
 	private final CudaDevice mCudaDevice;
-	private boolean mEnableHostMapping = true;
+	private boolean mEnableHostMapping = false;
 
-	public CudaContext(CudaDevice pCudaDevice)
+	public CudaContext(CudaDevice pCudaDevice, boolean pOpenGLInterop)
 	{
 		super();
 		mCudaDevice = pCudaDevice;
 		int lFlags = mEnableHostMapping ? CUctx_flags.CU_CTX_MAP_HOST : 0;
-		cuGLCtxCreate(mCUcontext, lFlags, pCudaDevice.getPeer());
+		if (pOpenGLInterop)
+			cuGLCtxCreate(mCUcontext, lFlags, pCudaDevice.getPeer());
+		else
+			cuCtxCreate(mCUcontext, lFlags, pCudaDevice.getPeer());
 	}
 
 	@Override

@@ -16,7 +16,7 @@ import org.apache.commons.lang.SystemUtils;
 
 public class NVCC
 {
-	private static final int cMaxDepth = 4;
+	private static final int cMaxDepth = 6;
 
 	private static volatile Path sFoundPath;
 
@@ -37,13 +37,17 @@ public class NVCC
 
 	private static final File findInternal(File pRootFolder) throws IOException
 	{
-
+		String lCompilerExecutableName = "nvcc";
 		if (pRootFolder == null)
 		{
+
 			if (SystemUtils.IS_OS_MAC_OSX)
 				pRootFolder = new File("/Developer/");
 			else if (SystemUtils.IS_OS_WINDOWS)
+			{
 				pRootFolder = new File(System.getenv("ProgramFiles"));
+				lCompilerExecutableName = "nvcc.exe";
+			}
 			else if (SystemUtils.IS_OS_LINUX)
 			{
 				File lFindNVCC = find("/usr/local");
@@ -56,6 +60,8 @@ public class NVCC
 				return null;
 		}
 
+		final String lCompilerExecutableNameFinal = lCompilerExecutableName;
+
 		// System.out.println(lStartFolder);
 
 		sFoundPath = null;
@@ -67,7 +73,9 @@ public class NVCC
 																				BasicFileAttributes pAttrs) throws IOException
 			{
 				// System.out.println(pFile);
-				if (pFile.toFile().getName().equals("nvcc"))
+				if (pFile.toFile()
+									.getName()
+									.equals(lCompilerExecutableNameFinal))
 				{
 					sFoundPath = pFile;
 					System.out.println("Found NVCC at: " + sFoundPath);
@@ -85,6 +93,8 @@ public class NVCC
 												cMaxDepth,
 												lVisitor);
 
+		if (sFoundPath == null)
+			return null;
 		return sFoundPath.toFile();
 	}
 }

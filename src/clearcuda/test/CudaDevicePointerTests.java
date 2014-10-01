@@ -20,7 +20,7 @@ public class CudaDevicePointerTests
 		int lLength = 1024;
 
 		try (CudaDevice lCudaDevice = new CudaDevice(0);
-				CudaContext lCudaContext = new CudaContext(lCudaDevice);
+				CudaContext lCudaContext = new CudaContext(lCudaDevice, false);
 				CudaDevicePointer lCudaDevicePointer = CudaDevicePointer.malloc(lLength * Sizeof.FLOAT))
 		{
 			float[] lFloatsIn = new float[lLength];
@@ -40,7 +40,7 @@ public class CudaDevicePointerTests
 		int lLength = 1024;
 
 		try (CudaDevice lCudaDevice = new CudaDevice(0);
-				CudaContext lCudaContext = new CudaContext(lCudaDevice);)
+				CudaContext lCudaContext = new CudaContext(lCudaDevice, false);)
 		{
 			if (lCudaDevice.getAttribute(CUdevice_attribute.CU_DEVICE_ATTRIBUTE_MANAGED_MEMORY) > 0)
 			{

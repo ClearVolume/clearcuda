@@ -15,8 +15,9 @@ public class CudaDeviceTests
 	@Test
 	public void test()
 	{
+
 		try (CudaDevice lCudaDevice = new CudaDevice(0);
-				CudaContext lCudaContext = new CudaContext(lCudaDevice))
+				CudaContext lCudaContext = new CudaContext(lCudaDevice, false))
 		{
 			System.out.println("clockRate=" + lCudaDevice.getProperties().clockRate);
 			System.out.println("memPitch=" + lCudaDevice.getProperties().memPitch);
@@ -33,6 +34,6 @@ public class CudaDeviceTests
 			System.out.println("MannagedAllocation=" + lCudaDevice.getAttribute(CUdevice_attribute.CU_DEVICE_ATTRIBUTE_MANAGED_MEMORY));
 
 		}
-		;
+		/**/
 	}
 }

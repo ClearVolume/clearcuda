@@ -25,7 +25,7 @@ public class CudaModuleAndFunctionTests
 	{
 
 		try (CudaDevice lCudaDevice = new CudaDevice(0);
-				CudaContext lCudaContext = new CudaContext(lCudaDevice);
+				CudaContext lCudaContext = new CudaContext(lCudaDevice, false);
 				CudaModule lCudaModule = CudaModule.moduleFromPTX(CudaCompilerTests.getPTX());)
 		{
 

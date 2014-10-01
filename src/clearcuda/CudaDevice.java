@@ -14,7 +14,7 @@ import jcuda.driver.JCudaDriver;
 
 public class CudaDevice implements CudaCloseable
 {
-	private final CUdevice mCUdevice = new CUdevice();
+	public final CUdevice mCUdevice = new CUdevice();
 
 	public CudaDevice(int pOrdinal)
 	{
@@ -29,7 +29,7 @@ public class CudaDevice implements CudaCloseable
 		byte[] lByteArray = new byte[256];
 		cuDeviceGetName(lByteArray, lByteArray.length, mCUdevice);
 		String lName = new String(lByteArray);
-		return lName;
+		return lName.trim();
 	}
 
 	public final CudaComputeCapability getComputeCapability()

@@ -14,13 +14,17 @@ import jcuda.driver.JCudaDriver;
 
 public class CudaDevice implements CudaCloseable
 {
+	static
+	{
+		cuInit(0);
+	}
+
 	public CUdevice mCUdevice = new CUdevice();
 
 	public CudaDevice(int pOrdinal)
 	{
 		super();
 		JCudaDriver.setExceptionsEnabled(true);
-		cuInit(0);
 		cuDeviceGet(mCUdevice, pOrdinal);
 	}
 

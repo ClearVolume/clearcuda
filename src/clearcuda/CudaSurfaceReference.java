@@ -4,7 +4,7 @@ import static jcuda.driver.JCudaDriver.cuModuleGetSurfRef;
 import static jcuda.driver.JCudaDriver.cuSurfRefSetArray;
 import jcuda.driver.CUsurfref;
 
-public class CudaSurfaceReference
+public class CudaSurfaceReference implements PeerInterface<CUsurfref>
 {
 
 	private final CUsurfref mCUsurfref = new CUsurfref();

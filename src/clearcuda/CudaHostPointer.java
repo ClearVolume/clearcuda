@@ -88,10 +88,14 @@ public class CudaHostPointer extends CudaDevicePointer
 	@Override
 	public void close() throws CudaException
 	{
-		if (mCudaAllocated)
-			cuMemFreeHost(mPointer);
-		else
-			cuMemHostUnregister(mPointer);
+		if (mPointer != null)
+		{
+			if (mCudaAllocated)
+				cuMemFreeHost(mPointer);
+			else
+				cuMemHostUnregister(mPointer);
+			mPointer = null;
+		}
 		super.close();
 	}
 

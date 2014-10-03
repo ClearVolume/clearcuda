@@ -8,10 +8,12 @@ import java.io.File;
 import jcuda.CudaException;
 import jcuda.driver.CUmodule;
 
-public class CudaModule implements CudaCloseable
+public class CudaModule	implements
+												CudaCloseable,
+												PeerInterface<CUmodule>
 {
 
-	private final CUmodule mCUmodule;
+	private CUmodule mCUmodule;
 	private final File mPTXFile;
 
 	private CudaModule(File pPTXFile)
@@ -31,7 +33,11 @@ public class CudaModule implements CudaCloseable
 	@Override
 	public void close() throws CudaException
 	{
-		cuModuleUnload(mCUmodule);
+		if (mCUmodule != null)
+		{
+			cuModuleUnload(mCUmodule);
+			mCUmodule = null;
+		}
 	}
 
 	public CudaFunction getFunction(String pFunctionSignature)

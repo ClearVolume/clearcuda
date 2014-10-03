@@ -8,7 +8,7 @@ import static jcuda.driver.JCudaDriver.cuParamSetTexRef;
 import jcuda.Pointer;
 import jcuda.driver.CUfunction;
 
-public class CudaFunction
+public class CudaFunction implements PeerInterface<CUfunction>
 {
 
 	private final String mFunctionName;

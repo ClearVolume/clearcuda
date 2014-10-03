@@ -9,7 +9,7 @@ import static jcuda.driver.JCudaDriver.cuTexRefSetFlags;
 import static jcuda.driver.JCudaDriver.cuTexRefSetFormat;
 import jcuda.driver.CUtexref;
 
-public class CudaTextureReference
+public class CudaTextureReference implements PeerInterface<CUtexref>
 {
 
 	private final CUtexref mCUtexref = new CUtexref();;

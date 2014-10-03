@@ -1,6 +1,6 @@
 package clearcuda;
 
-public interface PeerInterface
+public interface PeerInterface<P>
 {
-
+	P getPeer();
 }

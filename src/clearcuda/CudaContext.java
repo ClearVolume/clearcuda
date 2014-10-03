@@ -11,7 +11,9 @@ import jcuda.CudaException;
 import jcuda.driver.CUcontext;
 import jcuda.driver.CUctx_flags;
 
-public class CudaContext implements CudaCloseable
+public class CudaContext implements
+												CudaCloseable,
+												PeerInterface<CUcontext>
 {
 	private CUcontext mCUcontext = new CUcontext();
 	private final CudaDevice mCudaDevice;

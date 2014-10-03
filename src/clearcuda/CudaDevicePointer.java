@@ -18,7 +18,8 @@ import jcuda.driver.CUmemAttach_flags;
 
 public class CudaDevicePointer implements
 															CudaCloseable,
-															CopyFromToInterface
+															CopyFromToInterface,
+															PeerInterface<CUdeviceptr>
 {
 
 	protected CUdeviceptr mCUdeviceptr;
@@ -184,8 +185,11 @@ public class CudaDevicePointer implements
 	@Override
 	public void close() throws CudaException
 	{
-		if (!mExternallyAllocated)
+		if (!mExternallyAllocated && mCUdeviceptr != null)
+		{
 			cuMemFree(getPeer());
+			mCUdeviceptr = null;
+		}
 	}
 
 	@Override

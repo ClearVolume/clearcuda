@@ -9,7 +9,7 @@ import jcuda.CudaException;
 public class CudaOpenGLBufferObject extends CudaDevicePointer
 {
 
-	private final int mPixelBufferObjectId;
+	private Integer mPixelBufferObjectId;
 
 	public CudaOpenGLBufferObject(int pPixelBufferObjectId)
 	{
@@ -21,9 +21,7 @@ public class CudaOpenGLBufferObject extends CudaDevicePointer
 	public void map()
 	{
 		long[] lSizeInBytes = new long[1];
-		cuGLMapBufferObject(getPeer(),
-												lSizeInBytes,
-												mPixelBufferObjectId);
+		cuGLMapBufferObject(getPeer(), lSizeInBytes, mPixelBufferObjectId);
 		mSizeInBytes = lSizeInBytes[0];
 	}
 
@@ -35,7 +33,11 @@ public class CudaOpenGLBufferObject extends CudaDevicePointer
 	@Override
 	public void close() throws CudaException
 	{
-		cuGLUnregisterBufferObject(mPixelBufferObjectId);
+		if (mPixelBufferObjectId != null)
+		{
+			cuGLUnregisterBufferObject(mPixelBufferObjectId);
+			mPixelBufferObjectId = null;
+		}
 		super.close();
 	}
 

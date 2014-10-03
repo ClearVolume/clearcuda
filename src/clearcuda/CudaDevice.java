@@ -14,7 +14,7 @@ import jcuda.driver.JCudaDriver;
 
 public class CudaDevice implements CudaCloseable
 {
-	public final CUdevice mCUdevice = new CUdevice();
+	public CUdevice mCUdevice = new CUdevice();
 
 	public CudaDevice(int pOrdinal)
 	{
@@ -95,7 +95,10 @@ public class CudaDevice implements CudaCloseable
 	@Override
 	public void close()
 	{
-		
+		if (mCUdevice != null)
+		{
+			mCUdevice = null;
+		}
 	}
 
 }

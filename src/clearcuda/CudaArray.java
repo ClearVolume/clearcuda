@@ -17,10 +17,13 @@ import jcuda.driver.CUarray;
 import jcuda.driver.CUarray_format;
 import jcuda.driver.CUmemorytype;
 
-public class CudaArray implements CudaCloseable, CopyFromToInterface
+public class CudaArray implements
+											CudaCloseable,
+											CopyFromToInterface,
+											PeerInterface<CUarray>
 {
 
-	private final CUarray mCUarray;
+	private CUarray mCUarray;
 	private final long mNumberOfChannels;
 	private final long mWidth;
 	private final long mHeight;
@@ -137,7 +140,11 @@ public class CudaArray implements CudaCloseable, CopyFromToInterface
 	@Override
 	public void close() throws CudaException
 	{
-		cuArrayDestroy(mCUarray);
+		if (mCUarray != null)
+		{
+			cuArrayDestroy(mCUarray);
+			mCUarray = null;
+		}
 	}
 
 	public int getFormat()

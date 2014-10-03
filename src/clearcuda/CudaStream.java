@@ -13,7 +13,9 @@ import jcuda.driver.CUresult;
 import jcuda.driver.CUstream;
 import jcuda.driver.CUstream_flags;
 
-public class CudaStream implements CudaCloseable, PeerInterface
+public class CudaStream	implements
+												CudaCloseable,
+												PeerInterface<CUstream>
 {
 
 	private CUstream mCUStream;
@@ -25,9 +27,9 @@ public class CudaStream implements CudaCloseable, PeerInterface
 		int lFlags = CUstream_flags.CU_STREAM_NON_BLOCKING;
 
 		int[] lPriorityRange = getPriorityRange();
-		
+
 		mPriority = (int) round(lPriorityRange[0] + pPriorityNormalized
-											* (lPriorityRange[1] - lPriorityRange[0]));
+														* (lPriorityRange[1] - lPriorityRange[0]));
 
 		cuStreamCreateWithPriority(mCUStream, lFlags, mPriority);
 	}
@@ -66,7 +68,11 @@ public class CudaStream implements CudaCloseable, PeerInterface
 	@Override
 	public void close() throws CudaException
 	{
-		cuStreamDestroy(mCUStream);
+		if (mCUStream != null)
+		{
+			cuStreamDestroy(mCUStream);
+			mCUStream = null;
+		}
 	}
 
 	public CUstream getPeer()

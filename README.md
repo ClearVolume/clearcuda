@@ -1,4 +1,4 @@
-# ClearVolume #
+# ClearCuda #
 
 Facade API on top of JCUDA (http://www.jcuda.org/)
 offering a more pleasant and object-oriented API for

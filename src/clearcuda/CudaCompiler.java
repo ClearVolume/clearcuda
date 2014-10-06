@@ -121,9 +121,11 @@ public class CudaCompiler
 		long lHash = computeHashForFiles();
 		String lHashPrefix = String.format(".%d", lHash);
 
-		mPTXFile = new File(pPrimaryFile.getAbsolutePath()
-																		.replace(	".cu",
-																							lHashPrefix + ".ptx"));
+		File lPTXFile = new File(pPrimaryFile.getAbsolutePath()
+																					.replace(	".cu",
+																										lHashPrefix + ".ptx"));
+
+		mPTXFile = lPTXFile;
 
 		if (mPTXFile.exists())
 		{
@@ -136,6 +138,7 @@ public class CudaCompiler
 
 		return getPTXFile();
 	}
+
 
 	public void purge() throws IOException
 	{

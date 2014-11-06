@@ -144,6 +144,7 @@ public class CudaFunction implements PeerInterface<CUfunction>
 		return null;
 	}
 
+	@Override
 	public CUfunction getPeer()
 	{
 		return mCUfunction;

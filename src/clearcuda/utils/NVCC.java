@@ -45,7 +45,7 @@ public class NVCC
 				pRootFolder = new File("/Developer/");
 			else if (SystemUtils.IS_OS_WINDOWS)
 			{
-				pRootFolder = new File(System.getenv("ProgramFiles"));
+				pRootFolder = new File(System.getenv("CUDA_PATH"));
 				lCompilerExecutableName = "nvcc.exe";
 			}
 			else if (SystemUtils.IS_OS_LINUX)

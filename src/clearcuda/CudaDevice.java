@@ -14,9 +14,23 @@ import jcuda.driver.JCudaDriver;
 
 public class CudaDevice implements CudaCloseable
 {
+	private static boolean sCudaInitialized = false;
 	static
 	{
-		cuInit(0);
+		try
+		{
+			cuInit(0);
+			sCudaInitialized = true;
+		}
+		catch (Throwable e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public static boolean isCudaDeviceAvailable()
+	{
+		return sCudaInitialized && getNumberOfCudaDevices() > 0;
 	}
 
 	public CUdevice mCUdevice = new CUdevice();

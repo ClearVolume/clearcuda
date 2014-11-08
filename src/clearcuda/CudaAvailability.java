@@ -1,7 +1,5 @@
 package clearcuda;
 
-import static jcuda.driver.JCudaDriver.cuDeviceGetCount;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -11,7 +9,7 @@ public class CudaAvailability
 {
 	static public boolean isClearCudaOperational()
 	{
-		boolean lDeviceAvailable = isCudaDeviceAvailable();
+		boolean lDeviceAvailable = CudaDevice.isCudaDeviceAvailable();
 		boolean lCompilerIsAvailable = isCudaCompilerAvailable();
 		return lDeviceAvailable && lCompilerIsAvailable;
 	}
@@ -30,22 +28,5 @@ public class CudaAvailability
 			lCompilerIsAvailable = false;
 		}
 		return lCompilerIsAvailable;
-	}
-
-	private static boolean isCudaDeviceAvailable()
-	{
-		boolean lDeviceAvailable;
-		try
-		{
-			int[] lDeviceCount = new int[1];
-			cuDeviceGetCount(lDeviceCount);
-			lDeviceAvailable = lDeviceCount[0] > 0;
-		}
-		catch (Throwable e1)
-		{
-			e1.printStackTrace();
-			lDeviceAvailable = false;
-		}
-		return lDeviceAvailable;
 	}
 }

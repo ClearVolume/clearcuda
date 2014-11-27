@@ -1,7 +1,6 @@
 package clearcuda;
 
 import java.io.File;
-import java.io.IOException;
 
 import clearcuda.utils.NVCC;
 
@@ -9,9 +8,17 @@ public class CudaAvailability
 {
 	static public boolean isClearCudaOperational()
 	{
-		boolean lDeviceAvailable = CudaDevice.isCudaDeviceAvailable();
-		boolean lCompilerIsAvailable = isCudaCompilerAvailable();
-		return lDeviceAvailable && lCompilerIsAvailable;
+		try
+		{
+			boolean lDeviceAvailable = CudaDevice.isCudaDeviceAvailable();
+			boolean lCompilerIsAvailable = isCudaCompilerAvailable();
+			return lDeviceAvailable && lCompilerIsAvailable;
+		}
+		catch (Throwable e)
+		{
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	private static boolean isCudaCompilerAvailable()
@@ -22,7 +29,7 @@ public class CudaAvailability
 			File lNVCCCompiler = NVCC.find();
 			lCompilerIsAvailable = lNVCCCompiler.exists();
 		}
-		catch (IOException e)
+		catch (Throwable e)
 		{
 			e.printStackTrace();
 			lCompilerIsAvailable = false;

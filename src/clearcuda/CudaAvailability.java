@@ -16,7 +16,7 @@ public class CudaAvailability
 		}
 		catch (Throwable e)
 		{
-			e.printStackTrace();
+			System.out.println("CUDA NOT AVAILABLE");
 			return false;
 		}
 	}
@@ -31,7 +31,7 @@ public class CudaAvailability
 		}
 		catch (Throwable e)
 		{
-			e.printStackTrace();
+			System.out.println("CUDA COMPILER NOT AVAILABLE");
 			lCompilerIsAvailable = false;
 		}
 		return lCompilerIsAvailable;

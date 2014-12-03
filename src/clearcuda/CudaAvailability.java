@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
+import clearcuda.test.CudaCompilerTests;
 import clearcuda.utils.NVCC;
 
 public class CudaAvailability
@@ -13,7 +14,8 @@ public class CudaAvailability
 		try
 		{
 			return CudaDevice.isCudaDeviceAvailable() && isCudaCompilerAvailable()
-							&& doesCudaWorks();
+							&& doesCudaCompilerWorks()
+							&& doesCudaMemoryCopyWorks();
 		}
 		catch (Throwable e)
 		{
@@ -23,7 +25,32 @@ public class CudaAvailability
 		}
 	}
 
-	private static boolean doesCudaWorks()
+	private static boolean doesCudaCompilerWorks()
+	{
+		try
+		{
+			CudaCompiler lCUDACompiler = new CudaCompiler(null, "test");
+
+			lCUDACompiler.setParameter("funcname", "bozo");
+
+			File lPrimaryFile = lCUDACompiler.addFile(CudaCompilerTests.class,
+																								"cu/example.cu");
+			lCUDACompiler.addFile(CudaCompilerTests.class,
+														"cu/helper_math.h");
+
+			File lPTX = lCUDACompiler.compile(lPrimaryFile);
+			return lPTX.exists();
+		}
+		catch (Throwable e)
+		{
+			System.err.println(e.getLocalizedMessage());
+			e.printStackTrace();
+			System.out.println("CUDA NOT AVAILABLE");
+			return false;
+		}
+	}
+
+	private static boolean doesCudaMemoryCopyWorks()
 	{
 		try
 		{

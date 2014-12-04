@@ -17,9 +17,8 @@ import jcuda.driver.CUarray;
 import jcuda.driver.CUarray_format;
 import jcuda.driver.CUmemorytype;
 
-public class CudaArray implements
+public class CudaArray extends CopyFromToInterface implements
 											CudaCloseable,
-											CopyFromToInterface,
 											PeerInterface<CUarray>
 {
 

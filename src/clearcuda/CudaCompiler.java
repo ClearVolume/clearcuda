@@ -1,7 +1,6 @@
 package clearcuda;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.toIntExact;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -174,7 +173,7 @@ public class CudaCompiler
 	private long computeFileHash(File pFile) throws FileNotFoundException,
 																					IOException
 	{
-		final int lFileLength = toIntExact(Files.size(pFile.toPath()));
+		final int lFileLength = (int)(Files.size(pFile.toPath()));
 		byte[] lBuffer = new byte[lFileLength];
 		IOUtils.readFully(new FileInputStream(pFile), lBuffer);
 

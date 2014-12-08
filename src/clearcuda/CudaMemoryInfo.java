@@ -2,7 +2,7 @@ package clearcuda;
 
 import static jcuda.driver.JCudaDriver.cuMemGetInfo;
 
-public class CudaMemory
+public class CudaMemoryInfo
 {
 	static public final long getFreeMemory()
 	{

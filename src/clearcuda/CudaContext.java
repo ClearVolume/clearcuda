@@ -10,10 +10,9 @@ import static jcuda.driver.JCudaDriver.cuGLCtxCreate;
 import jcuda.CudaException;
 import jcuda.driver.CUcontext;
 import jcuda.driver.CUctx_flags;
+import coremem.interfaces.HasPeer;
 
-public class CudaContext implements
-												CudaCloseable,
-												PeerInterface<CUcontext>
+public class CudaContext implements CudaCloseable, HasPeer<CUcontext>
 {
 	private CUcontext mCUcontext = new CUcontext();
 	private final CudaDevice mCudaDevice;

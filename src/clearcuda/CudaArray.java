@@ -16,10 +16,12 @@ import jcuda.driver.CUDA_MEMCPY3D;
 import jcuda.driver.CUarray;
 import jcuda.driver.CUarray_format;
 import jcuda.driver.CUmemorytype;
+import coremem.interfaces.HasPeer;
 
 public class CudaArray extends CopyFromToInterface implements
-											CudaCloseable,
-											PeerInterface<CUarray>
+																									CudaCloseable,
+																									HasPeer<CUarray>
+
 {
 
 	private CUarray mCUarray;
@@ -186,8 +188,6 @@ public class CudaArray extends CopyFromToInterface implements
 		return mSigned;
 	}
 
-
-
 	@Override
 	public void copyFrom(Pointer pPointer, boolean pSync)
 	{
@@ -283,6 +283,7 @@ public class CudaArray extends CopyFromToInterface implements
 			cuCtxSynchronize();
 	}
 
+	@Override
 	public CUarray getPeer()
 	{
 		return mCUarray;

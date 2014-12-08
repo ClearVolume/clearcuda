@@ -7,8 +7,9 @@ import static jcuda.driver.JCudaDriver.cuModuleGetFunction;
 import static jcuda.driver.JCudaDriver.cuParamSetTexRef;
 import jcuda.Pointer;
 import jcuda.driver.CUfunction;
+import coremem.interfaces.HasPeer;
 
-public class CudaFunction implements PeerInterface<CUfunction>
+public class CudaFunction implements HasPeer<CUfunction>
 {
 
 	private final String mFunctionName;
@@ -17,7 +18,6 @@ public class CudaFunction implements PeerInterface<CUfunction>
 	private int mGridDimX, mGridDimY, mGridDimZ, mBlockDimX,
 			mBlockDimY, mBlockDimZ, mSharedMemoryBytes;
 	private boolean mSynchronize = true;
-
 
 	protected CudaFunction(CUfunction pCUfunction, String pFunctionName)
 	{
@@ -63,7 +63,6 @@ public class CudaFunction implements PeerInterface<CUfunction>
 		mBlockDimZ = pBlockDim[2];
 	}
 
-
 	public void setTexture(CudaTextureReference pCudaTextureReference)
 	{
 		cuParamSetTexRef(	getPeer(),
@@ -95,12 +94,9 @@ public class CudaFunction implements PeerInterface<CUfunction>
 										null);
 		if (mSynchronize)
 			cuCtxSynchronize();
-		
+
 		return lNativePointerObjectArray;
 	}
-
-
-
 
 	private Pointer convertParameter(Object pObject)
 	{

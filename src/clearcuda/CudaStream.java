@@ -12,10 +12,9 @@ import jcuda.driver.CUmemAttach_flags;
 import jcuda.driver.CUresult;
 import jcuda.driver.CUstream;
 import jcuda.driver.CUstream_flags;
+import coremem.interfaces.HasPeer;
 
-public class CudaStream	implements
-												CudaCloseable,
-												PeerInterface<CUstream>
+public class CudaStream implements CudaCloseable, HasPeer<CUstream>
 {
 
 	private CUstream mCUStream;

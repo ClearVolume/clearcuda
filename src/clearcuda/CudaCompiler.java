@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import clearcuda.utils.CPPCompiler;
 import clearcuda.utils.NVCC;
 
 public class CudaCompiler
@@ -33,7 +32,6 @@ public class CudaCompiler
 	private static final String cHashAlgo = "SHA-256";
 	private static final File cCompilationRootFolder = new File(System.getProperty("user.home"),
 																															".clearcudaj");
-
 
 	private CudaDevice mCudaDevice;
 
@@ -138,7 +136,6 @@ public class CudaCompiler
 		return getPTXFile();
 	}
 
-
 	public void purge() throws IOException
 	{
 		SimpleFileVisitor<Path> lSimpleFileVisitor = new SimpleFileVisitor<Path>()
@@ -173,7 +170,7 @@ public class CudaCompiler
 	private long computeFileHash(File pFile) throws FileNotFoundException,
 																					IOException
 	{
-		final int lFileLength = (int)(Files.size(pFile.toPath()));
+		final int lFileLength = (int) (Files.size(pFile.toPath()));
 		byte[] lBuffer = new byte[lFileLength];
 		IOUtils.readFully(new FileInputStream(pFile), lBuffer);
 
@@ -208,7 +205,7 @@ public class CudaCompiler
 		final String lCUFileFolderAbsPath = pCUFile.getParentFile()
 																								.getAbsolutePath();
 		final String lModelString = "-m" + System.getProperty("sun.arch.data.model");
-		final String lCPPCompilerAbsPath = CPPCompiler.find();
+		// final String lCPPCompilerAbsPath = CPPCompiler.find();
 		final String lCUFileAbsPath = pCUFile.getAbsolutePath();
 		final String lPTXFileAbsPath = pPTXFile.getAbsolutePath();
 
@@ -228,8 +225,7 @@ public class CudaCompiler
 
 		String lOptimizationLevel = "-O" + mOptimizationLevel;
 
-		String lFastMathString = mUseFastMath ? "--use_fast_math"
-																					: "";
+		String lFastMathString = mUseFastMath ? "--use_fast_math" : "";
 
 		final String lCommand = String.format("%s  -I. -I %s %s %s %s %s %s -ptx %s -o %s",
 																					lNVCCAbsPath,

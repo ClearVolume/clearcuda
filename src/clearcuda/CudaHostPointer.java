@@ -14,11 +14,11 @@ public class CudaHostPointer extends CudaDevicePointer
 {
 
 	protected Pointer mPointer;
-	protected long mSizeInBytes;
 	protected boolean mGPUMapped;
 	protected boolean mCudaAllocated;
 
 	private boolean mFastGPUWriteButSlowCPURead;
+
 
 	public static CudaHostPointer mallocPinned(long pSizeInBytes)
 	{

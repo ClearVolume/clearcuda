@@ -33,7 +33,7 @@ public class CudaCompilerTests
 																							"./cu/example.cu");
 		lCUDACompiler.addFile(CudaCompilerTests.class,
 													"./cu/helper_math.h");
-		
+
 		File lPTX = lCUDACompiler.compile(lPrimaryFile);
 		return lPTX;
 	}

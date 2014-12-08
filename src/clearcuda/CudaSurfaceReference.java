@@ -3,8 +3,9 @@ package clearcuda;
 import static jcuda.driver.JCudaDriver.cuModuleGetSurfRef;
 import static jcuda.driver.JCudaDriver.cuSurfRefSetArray;
 import jcuda.driver.CUsurfref;
+import coremem.interfaces.HasPeer;
 
-public class CudaSurfaceReference implements PeerInterface<CUsurfref>
+public class CudaSurfaceReference implements HasPeer<CUsurfref>
 {
 
 	private final CUsurfref mCUsurfref = new CUsurfref();
@@ -39,6 +40,5 @@ public class CudaSurfaceReference implements PeerInterface<CUsurfref>
 	{
 		return "CudaSurfaceReference [mSurfaceName=" + mSurfaceName + "]";
 	}
-
 
 }

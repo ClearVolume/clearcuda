@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,8 +49,8 @@ public class CudaCompiler
 
 	private volatile File mPTXFile;
 
-	public CudaCompiler(CudaDevice pCudaDevice,
-											String pCompilationUnitName)
+	public CudaCompiler(final CudaDevice pCudaDevice,
+											final String pCompilationUnitName)
 	{
 		super();
 		mCudaDevice = pCudaDevice;
@@ -65,35 +64,35 @@ public class CudaCompiler
 
 			return;
 		}
-		catch (NoSuchAlgorithmException e)
+		catch (final NoSuchAlgorithmException e)
 		{
 			e.printStackTrace();
 		}
 
 	}
 
-	public void setParameter(String pKey, String pValue)
+	public void setParameter(final String pKey, final String pValue)
 	{
 		mKeyValueMap.put(pKey, pValue);
 	}
 
-	public ArrayList<File> addFiles(Class<?> pRootClass,
-																	String... pRessourcePaths) throws IOException
+	public ArrayList<File> addFiles(final Class<?> pRootClass,
+																	final String... pRessourcePaths) throws IOException
 	{
-		ArrayList<File> lFileList = new ArrayList<File>();
-		for (String lResourcePath : pRessourcePaths)
+		final ArrayList<File> lFileList = new ArrayList<File>();
+		for (final String lResourcePath : pRessourcePaths)
 		{
-			File lFile = addFile(pRootClass, lResourcePath);
+			final File lFile = addFile(pRootClass, lResourcePath);
 			lFileList.add(lFile);
 		}
 		return lFileList;
 	}
 
-	public File addFile(Class<?> pClass, String pRessourcePath) throws IOException
+	public File addFile(final Class<?> pClass, final String pRessourcePath) throws IOException
 	{
-		InputStream lInputStreamCUFile = pClass.getResourceAsStream(pRessourcePath);
+		final InputStream lInputStreamCUFile = pClass.getResourceAsStream(pRessourcePath);
 		final StringWriter writer = new StringWriter();
-		IOUtils.copy(lInputStreamCUFile, writer, Charset.defaultCharset());
+		IOUtils.copy( lInputStreamCUFile, writer );
 		String lCUFileString = writer.toString();
 
 		if (mKeyValueMap != null)
@@ -108,19 +107,19 @@ public class CudaCompiler
 
 		final String lFileName = pRessourcePath.replace("./", "");
 		final File lCUFile = new File(mCompilationFolder, lFileName);
-		FileUtils.write(lCUFile, lCUFileString);
+		FileUtils.writeStringToFile( lCUFile, lCUFileString );
 
 		mFileList.add(lCUFile);
 
 		return lCUFile;
 	}
 
-	public File compile(File pPrimaryFile) throws IOException
+	public File compile(final File pPrimaryFile) throws IOException
 	{
-		long lHash = computeHashForFiles();
-		String lHashPrefix = String.format(".%d", lHash);
+		final long lHash = computeHashForFiles();
+		final String lHashPrefix = String.format(".%d", lHash);
 
-		File lPTXFile = new File(pPrimaryFile.getAbsolutePath()
+		final File lPTXFile = new File(pPrimaryFile.getAbsolutePath()
 																					.replace(	".cu",
 																										lHashPrefix + ".ptx"));
 
@@ -141,11 +140,11 @@ public class CudaCompiler
 
 	public void purge() throws IOException
 	{
-		SimpleFileVisitor<Path> lSimpleFileVisitor = new SimpleFileVisitor<Path>()
+		final SimpleFileVisitor<Path> lSimpleFileVisitor = new SimpleFileVisitor<Path>()
 		{
 			@Override
-			public FileVisitResult visitFile(	Path file,
-																				BasicFileAttributes attrs) throws IOException
+			public FileVisitResult visitFile(	final Path file,
+																				final BasicFileAttributes attrs) throws IOException
 			{
 				if (file.getFileName().endsWith(".ptx"))
 					Files.delete(file);
@@ -162,25 +161,24 @@ public class CudaCompiler
 																		IOException
 	{
 		long lFilesHash = 0;
-		for (File lFile : mFileList)
+		for (final File lFile : mFileList)
 		{
-			long lFileHash = computeFileHash(lFile);
+			final long lFileHash = computeFileHash(lFile);
 			lFilesHash += lFileHash;
 		}
 		return abs(lFilesHash);
 	}
 
-	private long computeFileHash(File pFile) throws FileNotFoundException,
+	private long computeFileHash(final File pFile) throws FileNotFoundException,
 																					IOException
 	{
 		final int lFileLength = (int)(Files.size(pFile.toPath()));
-		byte[] lBuffer = new byte[lFileLength];
-		IOUtils.readFully(new FileInputStream(pFile), lBuffer);
+		final byte[] lBuffer = IOUtils.toByteArray( new FileInputStream( pFile ) );
 
-		byte[] lDigest = mMessageDigest.digest(lBuffer);
+		final byte[] lDigest = mMessageDigest.digest(lBuffer);
 
 		long lHashCode = 0;
-		for (byte lByte : lDigest)
+		for (final byte lByte : lDigest)
 		{
 			lHashCode = Long.rotateRight(lHashCode, 3);
 			lHashCode += lByte;
@@ -194,7 +192,7 @@ public class CudaCompiler
 		compile(null, pCUFile, pPTXFile);
 	}
 
-	public static void compile(	CudaDevice pCudaDevice,
+	public static void compile(	final CudaDevice pCudaDevice,
 															final File pCUFile,
 															final File pPTXFile) throws IOException
 	{
@@ -218,7 +216,7 @@ public class CudaCompiler
 		String lArchitectureString = "";
 		if (pCudaDevice != null)
 		{
-			CudaComputeCapability lComputeCapability = pCudaDevice.getComputeCapability();
+			final CudaComputeCapability lComputeCapability = pCudaDevice.getComputeCapability();
 			lArchitectureString = String.format("-arch=compute_%d%d -code=sm_%d%d",
 																					lComputeCapability.getMajor(),
 																					lComputeCapability.getMinor(),
@@ -226,9 +224,9 @@ public class CudaCompiler
 																					lComputeCapability.getMinor());
 		}
 
-		String lOptimizationLevel = "-O" + mOptimizationLevel;
+		final String lOptimizationLevel = "-O" + mOptimizationLevel;
 
-		String lFastMathString = mUseFastMath ? "--use_fast_math"
+		final String lFastMathString = mUseFastMath ? "--use_fast_math"
 																					: "";
 
 		final String lCommand = String.format("%s  -I. -I %s %s %s %s %s %s -ptx %s -o %s",
@@ -249,7 +247,7 @@ public class CudaCompiler
 		final String errorMessage = new String(IOUtils.toByteArray(process.getErrorStream()));
 		final String outputMessage = new String(IOUtils.toByteArray(process.getInputStream()));
 
-		int exitValue = waitFor(process);
+		final int exitValue = waitFor(process);
 
 		if (exitValue != 0)
 		{
@@ -261,7 +259,7 @@ public class CudaCompiler
 
 	}
 
-	private static int waitFor(Process pProcess)
+	private static int waitFor(final Process pProcess)
 	{
 		try
 		{

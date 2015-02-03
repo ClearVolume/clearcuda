@@ -78,18 +78,34 @@ public class CudaCompiler
 	}
 
 	public ArrayList<File> addFiles(Class<?> pRootClass,
+																	boolean pStripPrefixPath,
 																	String... pRessourcePaths) throws IOException
 	{
 		ArrayList<File> lFileList = new ArrayList<File>();
 		for (String lResourcePath : pRessourcePaths)
 		{
-			File lFile = addFile(pRootClass, lResourcePath);
+			File lFile = addFile(	pRootClass,
+														lResourcePath,
+														pStripPrefixPath);
 			lFileList.add(lFile);
 		}
 		return lFileList;
 	}
 
+	public ArrayList<File> addFiles(Class<?> pRootClass,
+																	String... pRessourcePaths) throws IOException
+	{
+		return addFiles(pRootClass, false, pRessourcePaths);
+	}
+
 	public File addFile(Class<?> pClass, String pRessourcePath) throws IOException
+	{
+		return addFile(pClass, pRessourcePath, false);
+	}
+
+	public File addFile(Class<?> pClass,
+											String pRessourcePath,
+											boolean pStripPrefixPath) throws IOException
 	{
 		InputStream lInputStreamCUFile = pClass.getResourceAsStream(pRessourcePath);
 		final StringWriter writer = new StringWriter();
@@ -107,12 +123,15 @@ public class CudaCompiler
 			}
 
 		final String lFileName = pRessourcePath.replace("./", "");
-		final File lCUFile = new File(mCompilationFolder, lFileName);
-		FileUtils.write(lCUFile, lCUFileString);
+		final File lSourceFile = new File(lFileName);
+		final File lDestinationFile = new File(	mCompilationFolder,
+																						pStripPrefixPath ? lSourceFile.getName()
+																														: lSourceFile.getPath());
+		FileUtils.write(lDestinationFile, lCUFileString);
 
-		mFileList.add(lCUFile);
+		mFileList.add(lDestinationFile);
 
-		return lCUFile;
+		return lDestinationFile;
 	}
 
 	public File compile(File pPrimaryFile) throws IOException

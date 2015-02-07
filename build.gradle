@@ -9,22 +9,22 @@ sourceSets
   {
     java 
     {
-      srcDir 'src'
+      srcDir 'src/java'
     }
     resources 
     { 
-      srcDir 'src'
+      srcDir 'src/java'
     }
   }
   test
   {
     java 
     {
-      srcDir 'src'
+      srcDir 'src/java'
     }
     resources 
     { 
-      srcDir 'src'
+      srcDir 'src/java'
     }
   }
 }

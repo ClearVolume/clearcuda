@@ -1,13 +1,11 @@
 package clearcuda;
 
-import static java.lang.Math.abs;
+import clearcuda.utils.CPPCompiler;
+import clearcuda.utils.NVCC;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -21,11 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-
-import clearcuda.utils.CPPCompiler;
-import clearcuda.utils.NVCC;
+import static java.lang.Math.abs;
 
 public class CudaCompiler
 {

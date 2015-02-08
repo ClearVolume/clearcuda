@@ -1,11 +1,13 @@
 package clearcuda;
 
-import clearcuda.utils.CPPCompiler;
-import clearcuda.utils.NVCC;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import static java.lang.Math.abs;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -19,7 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static java.lang.Math.abs;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+
+import clearcuda.utils.CPPCompiler;
+import clearcuda.utils.NVCC;
 
 public class CudaCompiler
 {
@@ -141,7 +147,7 @@ public class CudaCompiler
 
 		if (mPTXFile.exists())
 		{
-			System.out.format("PTX already compiled, using the cached version (%s) ",
+			System.out.format("PTX already compiled, using the cached version (%s) \n",
 												mPTXFile.getName());
 			return mPTXFile;
 		}

@@ -11,6 +11,7 @@ import static jcuda.driver.JCudaDriver.cuInit;
 import jcuda.driver.CUdevice;
 import jcuda.driver.CUdevprop;
 import jcuda.driver.JCudaDriver;
+import jcuda.runtime.JCuda;
 
 public class CudaDevice implements CudaCloseable
 {
@@ -22,7 +23,7 @@ public class CudaDevice implements CudaCloseable
 			cuInit(0);
 			sCudaInitialized = true;
 		}
-		catch (Throwable e)
+		catch (final Throwable e)
 		{
 			e.printStackTrace();
 		}
@@ -35,6 +36,28 @@ public class CudaDevice implements CudaCloseable
 
 	public CUdevice mCUdevice = new CUdevice();
 
+	public static CudaDevice getBestCudaDevice()
+	{
+		final int lNumberOfCudaDevices = getNumberOfCudaDevices();
+
+		CudaDevice lBestCudaDevice = null;
+		long lMaximumTotalMemory = Long.MIN_VALUE;
+		for (int i = 0; i < lNumberOfCudaDevices; i++)
+		{
+			@SuppressWarnings("resource")
+			final CudaDevice lCudaDevice = new CudaDevice(i);
+			final long lTotalMem = lCudaDevice.getTotalMem();
+			if (lTotalMem > lMaximumTotalMemory)
+			{
+				lMaximumTotalMemory = lTotalMem;
+				if (lBestCudaDevice != null)
+					lBestCudaDevice.close();
+				lBestCudaDevice = lCudaDevice;
+			}
+		}
+		return lBestCudaDevice;
+	}
+
 	public CudaDevice(int pOrdinal)
 	{
 		super();
@@ -44,26 +67,26 @@ public class CudaDevice implements CudaCloseable
 
 	public String getName()
 	{
-		byte[] lByteArray = new byte[256];
+		final byte[] lByteArray = new byte[256];
 		cuDeviceGetName(lByteArray, lByteArray.length, mCUdevice);
-		String lName = new String(lByteArray);
+		final String lName = new String(lByteArray);
 		return lName.trim();
 	}
 
 	public final CudaComputeCapability getComputeCapability()
 	{
-		int[] lMajor = new int[1];
-		int[] lMinor = new int[1];
+		final int[] lMajor = new int[1];
+		final int[] lMinor = new int[1];
 		cuDeviceComputeCapability(lMajor, lMinor, mCUdevice);
 
-		CudaComputeCapability lCudaComputeCapability = new CudaComputeCapability(	lMajor[0],
-																																							lMinor[0]);
+		final CudaComputeCapability lCudaComputeCapability = new CudaComputeCapability(	lMajor[0],
+																																										lMinor[0]);
 		return lCudaComputeCapability;
 	}
 
 	public CUdevprop getProperties()
 	{
-		CUdevprop lCUdevprop = new CUdevprop();
+		final CUdevprop lCUdevprop = new CUdevprop();
 		cuDeviceGetProperties(lCUdevprop, mCUdevice);
 		return lCUdevprop;
 	}
@@ -75,21 +98,29 @@ public class CudaDevice implements CudaCloseable
 	 */
 	public int getAttribute(int pAttribute)
 	{
-		int[] lAttributeValue = new int[1];
+		final int[] lAttributeValue = new int[1];
 		cuDeviceGetAttribute(lAttributeValue, pAttribute, mCUdevice);
 		return lAttributeValue[0];
 	}
 
 	public final long getTotalMem()
 	{
-		long[] lDeviceTotalMem = new long[1];
+		final long[] lDeviceTotalMem = new long[1];
 		cuDeviceTotalMem(lDeviceTotalMem, mCUdevice);
 		return lDeviceTotalMem[0];
 	}
 
+	public long getAvailableMem()
+	{
+		final long[] lFreeMemory = new long[1];
+		final long[] lTotalMemory = new long[1];
+		JCuda.cudaMemGetInfo(lFreeMemory, lTotalMemory);
+		return lFreeMemory[0];
+	}
+
 	public static final int getNumberOfCudaDevices()
 	{
-		int[] lDeviceCount = new int[1];
+		final int[] lDeviceCount = new int[1];
 		cuDeviceGetCount(lDeviceCount);
 		return lDeviceCount[0];
 	}
@@ -118,5 +149,6 @@ public class CudaDevice implements CudaCloseable
 			mCUdevice = null;
 		}
 	}
+
 
 }

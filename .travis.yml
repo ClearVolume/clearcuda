@@ -11,3 +11,6 @@ before_script:
   - sudo dpkg -i cuda-repo-ubuntu1204_6.5-14_amd64.deb
   - sudo apt-get update -q
   - sudo apt-get install cuda
+  - export CUDA_HOME=/usr/local/cuda-6.5 
+  - export LD_LIBRARY_PATH=${CUDA_HOME}/lib64 
+  - export PATH=${CUDA_HOME}/bin:${PATH} 

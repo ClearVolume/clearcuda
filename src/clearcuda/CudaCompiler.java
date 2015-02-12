@@ -32,7 +32,7 @@ public class CudaCompiler
 
 	private static final String cHashAlgo = "SHA-256";
 	private static final File cCompilationRootFolder = new File(System.getProperty("user.home"),
-																															".clearcudaj");
+																															".clearcuda");
 
 
 	private CudaDevice mCudaDevice;
@@ -65,7 +65,7 @@ public class CudaCompiler
 
 			return;
 		}
-		catch (NoSuchAlgorithmException e)
+		catch (final NoSuchAlgorithmException e)
 		{
 			e.printStackTrace();
 		}
@@ -81,10 +81,10 @@ public class CudaCompiler
 																	boolean pStripPrefixPath,
 																	String... pRessourcePaths) throws IOException
 	{
-		ArrayList<File> lFileList = new ArrayList<File>();
-		for (String lResourcePath : pRessourcePaths)
+		final ArrayList<File> lFileList = new ArrayList<File>();
+		for (final String lResourcePath : pRessourcePaths)
 		{
-			File lFile = addFile(	pRootClass,
+			final File lFile = addFile(	pRootClass,
 														lResourcePath,
 														pStripPrefixPath);
 			lFileList.add(lFile);
@@ -107,7 +107,7 @@ public class CudaCompiler
 											String pRessourcePath,
 											boolean pStripPrefixPath) throws IOException
 	{
-		InputStream lInputStreamCUFile = pClass.getResourceAsStream(pRessourcePath);
+		final InputStream lInputStreamCUFile = pClass.getResourceAsStream(pRessourcePath);
 		final StringWriter writer = new StringWriter();
 		IOUtils.copy(lInputStreamCUFile, writer, Charset.defaultCharset());
 		String lCUFileString = writer.toString();
@@ -136,10 +136,10 @@ public class CudaCompiler
 
 	public File compile(File pPrimaryFile) throws IOException
 	{
-		long lHash = computeHashForFiles();
-		String lHashPrefix = String.format(".%d", lHash);
+		final long lHash = computeHashForFiles();
+		final String lHashPrefix = String.format(".%d", lHash);
 
-		File lPTXFile = new File(pPrimaryFile.getAbsolutePath()
+		final File lPTXFile = new File(pPrimaryFile.getAbsolutePath()
 																					.replace(	".cu",
 																										lHashPrefix + ".ptx"));
 
@@ -160,7 +160,7 @@ public class CudaCompiler
 
 	public void purge() throws IOException
 	{
-		SimpleFileVisitor<Path> lSimpleFileVisitor = new SimpleFileVisitor<Path>()
+		final SimpleFileVisitor<Path> lSimpleFileVisitor = new SimpleFileVisitor<Path>()
 		{
 			@Override
 			public FileVisitResult visitFile(	Path file,
@@ -181,9 +181,9 @@ public class CudaCompiler
 																		IOException
 	{
 		long lFilesHash = 0;
-		for (File lFile : mFileList)
+		for (final File lFile : mFileList)
 		{
-			long lFileHash = computeFileHash(lFile);
+			final long lFileHash = computeFileHash(lFile);
 			lFilesHash += lFileHash;
 		}
 		return abs(lFilesHash);
@@ -193,13 +193,13 @@ public class CudaCompiler
 																					IOException
 	{
 		final int lFileLength = (int)(Files.size(pFile.toPath()));
-		byte[] lBuffer = new byte[lFileLength];
+		final byte[] lBuffer = new byte[lFileLength];
 		IOUtils.readFully(new FileInputStream(pFile), lBuffer);
 
-		byte[] lDigest = mMessageDigest.digest(lBuffer);
+		final byte[] lDigest = mMessageDigest.digest(lBuffer);
 
 		long lHashCode = 0;
-		for (byte lByte : lDigest)
+		for (final byte lByte : lDigest)
 		{
 			lHashCode = Long.rotateRight(lHashCode, 3);
 			lHashCode += lByte;
@@ -237,7 +237,7 @@ public class CudaCompiler
 		String lArchitectureString = "";
 		if (pCudaDevice != null)
 		{
-			CudaComputeCapability lComputeCapability = pCudaDevice.getComputeCapability();
+			final CudaComputeCapability lComputeCapability = pCudaDevice.getComputeCapability();
 			lArchitectureString = String.format("-arch=compute_%d%d -code=sm_%d%d",
 																					lComputeCapability.getMajor(),
 																					lComputeCapability.getMinor(),
@@ -245,9 +245,9 @@ public class CudaCompiler
 																					lComputeCapability.getMinor());
 		}
 
-		String lOptimizationLevel = "-O" + mOptimizationLevel;
+		final String lOptimizationLevel = "-O" + mOptimizationLevel;
 
-		String lFastMathString = mUseFastMath ? "--use_fast_math"
+		final String lFastMathString = mUseFastMath ? "--use_fast_math"
 																					: "";
 
 		final String lCommand = String.format("%s  -I. -I %s %s %s %s %s %s -ptx %s -o %s",
@@ -268,7 +268,7 @@ public class CudaCompiler
 		final String errorMessage = new String(IOUtils.toByteArray(process.getErrorStream()));
 		final String outputMessage = new String(IOUtils.toByteArray(process.getInputStream()));
 
-		int exitValue = waitFor(process);
+		final int exitValue = waitFor(process);
 
 		if (exitValue != 0)
 		{

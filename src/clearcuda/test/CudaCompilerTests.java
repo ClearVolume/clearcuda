@@ -15,8 +15,7 @@ public class CudaCompilerTests
 	@Test
 	public void test() throws IOException
 	{
-
-		File lPTX = getPTX();
+		final File lPTX = getPTX();
 
 		System.out.println(lPTX);
 
@@ -25,18 +24,18 @@ public class CudaCompilerTests
 
 	public static final File getPTX() throws IOException
 	{
-		CudaCompiler lCUDACompiler = new CudaCompiler(null, "test");
+		final CudaCompiler lCUDACompiler = new CudaCompiler(null, "test");
 
 		lCUDACompiler.setParameter("funcname", "bozo");
 
-		File lPrimaryFile = lCUDACompiler.addFile(CudaCompilerTests.class,
+		final File lPrimaryFile = lCUDACompiler.addFile(CudaCompilerTests.class,
 																							"./cu/example.cu",
 																							true);
 		lCUDACompiler.addFile(CudaCompiler.class,
 													"./includes/helper_math.h",
 													true);
 
-		File lPTX = lCUDACompiler.compile(lPrimaryFile);
+		final File lPTX = lCUDACompiler.compile(lPrimaryFile);
 		return lPTX;
 	}
 

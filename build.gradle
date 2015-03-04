@@ -1,7 +1,16 @@
+plugins {
+  id "com.jfrog.bintray" version "1.0"
+  id "com.github.hierynomus.license" version "0.11.0"
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
+
+
+//***********************************************************************************
+// JAVA CODE BUILDING
 
 sourceSets 
 {
@@ -31,8 +40,7 @@ sourceSets
 
 
 sourceCompatibility = 1.7
-group = 'royer'
-version = '1.0-SNAPSHOT'
+
 
 test 
 {
@@ -76,16 +84,7 @@ repositories
 
 }
 
-publishing {
-  publications {
-    maven(MavenPublication) {
-      from components.java
-      artifact sourcesJar {
-        classifier "sources"
-      }
-    }
-  }
-}
+
 
 task sourcesJar(type: Jar, dependsOn:classes) {
     classifier = 'sources'
@@ -105,21 +104,84 @@ if (JavaVersion.current().isJava8Compatible()) {
     }
   }
 
+
+
+//***********************************************************************************
+// BINTRAY PUBLISHING
+
+group = 'net.clearvolume'
+version = '1.0'
+
 artifacts 
 {
     archives sourcesJar
     archives javadocJar
 }
 
-uploadArchives 
-{
-    repositories 
-    {
-        mavenDeployer 
-        {
-            repository(url: "file:../../Repos/ClearVolumeMavenRepo")
+publishing {
+  publications {
+    maven(MavenPublication) {
+      from components.java
+      artifact sourcesJar {
+        classifier "sources"
+      }
+    }
+  }
+}
+
+
+
+bintray {
+
+    // property must be set in ~/.gradle/gradle.properties
+    user = bintray_user 
+    key =  bintray_key
+
+    configurations = ['default'] //When uploading configuration files
+    // - OR -
+    //publications = ['mavenStuff'] //When uploading Maven-based publication files
+    // - AND/OR -
+    /*filesSpec { //When uploading any arbitrary files ('filesSpec' is a standard Gradle CopySpec)
+        from 'arbitrary-files'
+        into 'standalone_files/level1'
+        rename '(.+)\\.(.+)', '$1-suffix.$2'
+    }/**/
+
+    
+    dryRun = false //Whether to run this as dry-run, without deploying
+    publish = true //If version should be auto published after an upload
+    pkg {
+        repo = 'ClearVolume'
+        userOrg = 'clearvolume' //An optional organization name when the repo belongs to one of the user's orgs
+        name = 'ClearCUDA'
+        desc = 'ClearCUDA'
+        websiteUrl = 'https://clearvolume.github.io/ClearVolume/'
+        issueTrackerUrl = 'https://github.com/ClearVolume/ClearCUDA/issues'
+        vcsUrl = 'https://github.com/ClearVolume/ClearCUDA.git'
+        licenses = ['Apache-2.0']
+        labels = ['ClearCUDA', 'GPU', '3D', 'Real-time']
+        publicDownloadNumbers = true
+        //attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
+        //Optional version descriptor
+        version {
+            name = '1.0-Beta' //Bintray logical version name
+            desc = '.'
+            released  = new java.util.Date()
+            vcsTag = '1.0.0'
+            /*attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin'] //Optional version-level attributes
+            gpg {
+                sign = false //Determines whether to GPG sign the files. The default is false
+                passphrase = 'passphrase' //Optional. The passphrase for GPG signing'
+            }
+            mavenCentralSync {
+                sync = false //Optional (true by default). Determines whether to sync the version to Maven Central.
+                user = 'userToken' //OSS user token
+                password = 'paasword' //OSS user password
+                close = '1' //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
+            }  /**/          
         }
     }
+    /**/
 }
 
 

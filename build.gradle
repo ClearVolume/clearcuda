@@ -164,7 +164,7 @@ bintray {
         //attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
         //Optional version descriptor
         version {
-            name = '1.0-Beta' //Bintray logical version name
+            name = '1.0' //Bintray logical version name
             desc = '.'
             released  = new java.util.Date()
             vcsTag = '1.0.0'

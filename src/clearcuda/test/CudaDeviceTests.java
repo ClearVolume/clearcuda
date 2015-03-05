@@ -6,6 +6,7 @@ import jcuda.driver.CUdevice_attribute;
 
 import org.junit.Test;
 
+import clearcuda.CudaAvailability;
 import clearcuda.CudaContext;
 import clearcuda.CudaDevice;
 
@@ -15,6 +16,9 @@ public class CudaDeviceTests
 	@Test
 	public void test()
 	{
+		if (!CudaAvailability.isClearCudaOperational())
+			return;
+
 		System.out.println("CudaDevice.getNumberOfCudaDevices()=" + CudaDevice.getNumberOfCudaDevices());
 		for (int lDeviceId = 0; lDeviceId < CudaDevice.getNumberOfCudaDevices(); lDeviceId++)
 			try (CudaDevice lCudaDevice = new CudaDevice(lDeviceId);

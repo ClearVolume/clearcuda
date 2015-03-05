@@ -28,6 +28,14 @@ public class CudaCompilerTests
 
 		lCUDACompiler.setParameter("funcname", "bozo");
 
+<<<<<<< HEAD
+		File lPrimaryFile = lCUDACompiler.addFile(CudaCompilerTests.class,
+																							"./cu/example.cu");
+		lCUDACompiler.addFile(CudaCompilerTests.class,
+													"./cu/helper_math.h");
+
+		File lPTX = lCUDACompiler.compile(lPrimaryFile);
+=======
 		final File lPrimaryFile = lCUDACompiler.addFile(CudaCompilerTests.class,
 																							"./cu/example.cu",
 																							true);
@@ -36,6 +44,7 @@ public class CudaCompilerTests
 													true);
 
 		final File lPTX = lCUDACompiler.compile(lPrimaryFile);
+>>>>>>> master
 		return lPTX;
 	}
 

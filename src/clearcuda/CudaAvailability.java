@@ -1,11 +1,11 @@
 package clearcuda;
 
-import static org.junit.Assert.assertEquals;
+import clearcuda.test.CudaCompilerTests;
+import clearcuda.utils.NVCC;
 
 import java.io.File;
 
-import clearcuda.test.CudaCompilerTests;
-import clearcuda.utils.NVCC;
+import static org.junit.Assert.assertEquals;
 
 public class CudaAvailability
 {
@@ -14,8 +14,8 @@ public class CudaAvailability
 		try
 		{
 			return CudaDevice.isCudaDeviceAvailable() && isCudaCompilerAvailable()
-							&& doesCudaCompilerWorks()
-							&& doesCudaMemoryCopyWorks();
+							&& isCudaCompilerWorking()
+							&& isCudaMemoryCopyWorking();
 		}
 		catch (Throwable e)
 		{
@@ -25,7 +25,7 @@ public class CudaAvailability
 		}
 	}
 
-	private static boolean doesCudaCompilerWorks()
+	private static boolean isCudaCompilerWorking()
 	{
 		try
 		{
@@ -50,7 +50,7 @@ public class CudaAvailability
 		}
 	}
 
-	private static boolean doesCudaMemoryCopyWorks()
+	private static boolean isCudaMemoryCopyWorking()
 	{
 		try
 		{

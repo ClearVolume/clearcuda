@@ -178,6 +178,14 @@ public class CudaArray extends CopyFromToInterface implements
 		return mDepth;
 	}
 
+	public long getSizeInBytes()
+	{
+		return getWidth() * getHeight()
+						* getDepth()
+						* getNumberOfChannels()
+						* getBytesPerChannel();
+	}
+
 	public boolean isFloat()
 	{
 		return mFloat;
@@ -312,5 +320,6 @@ public class CudaArray extends CopyFromToInterface implements
 	{
 		return mSurfaceEnabled;
 	}
+
 
 }

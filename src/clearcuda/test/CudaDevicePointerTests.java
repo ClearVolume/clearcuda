@@ -6,6 +6,7 @@ import jcuda.driver.CUdevice_attribute;
 
 import org.junit.Test;
 
+import clearcuda.CudaAvailability;
 import clearcuda.CudaContext;
 import clearcuda.CudaDevice;
 import clearcuda.CudaDevicePointer;
@@ -16,18 +17,20 @@ public class CudaDevicePointerTests
 	@Test
 	public void testMalloc()
 	{
+		if (!CudaAvailability.isClearCudaOperational())
+			return;
 
-		int lLength = 1024;
+		final int lLength = 1024;
 
 		try (CudaDevice lCudaDevice = new CudaDevice(0);
 				CudaContext lCudaContext = new CudaContext(lCudaDevice, false);
 				CudaDevicePointer lCudaDevicePointer = CudaDevicePointer.malloc(lLength * Sizeof.FLOAT))
 		{
-			float[] lFloatsIn = new float[lLength];
+			final float[] lFloatsIn = new float[lLength];
 			lFloatsIn[lLength / 2] = 123;
 			lCudaDevicePointer.copyFrom(lFloatsIn, true);
 
-			float[] lFloatsOut = new float[lLength];
+			final float[] lFloatsOut = new float[lLength];
 			lCudaDevicePointer.copyTo(lFloatsOut, true);
 			assertEquals(123, lFloatsOut[lLength / 2], 0);
 		}
@@ -36,8 +39,10 @@ public class CudaDevicePointerTests
 	@Test
 	public void testMallocManaged()
 	{
+		if (!CudaAvailability.isClearCudaOperational())
+			return;
 
-		int lLength = 1024;
+		final int lLength = 1024;
 
 		try (CudaDevice lCudaDevice = new CudaDevice(0);
 				CudaContext lCudaContext = new CudaContext(lCudaDevice, false);)
@@ -46,11 +51,11 @@ public class CudaDevicePointerTests
 			{
 				try (CudaDevicePointer lCudaDevicePointer = CudaDevicePointer.mallocManaged(lLength * Sizeof.FLOAT))
 				{
-					float[] lFloatsIn = new float[lLength];
+					final float[] lFloatsIn = new float[lLength];
 					lFloatsIn[lLength / 2] = 123;
 					lCudaDevicePointer.copyFrom(lFloatsIn, true);
 
-					float[] lFloatsOut = new float[lLength];
+					final float[] lFloatsOut = new float[lLength];
 					lCudaDevicePointer.copyTo(lFloatsOut, true);
 					assertEquals(123, lFloatsOut[lLength / 2], 0);
 				}

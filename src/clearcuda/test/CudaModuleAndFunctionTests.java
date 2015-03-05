@@ -9,6 +9,7 @@ import jcuda.Sizeof;
 
 import org.junit.Test;
 
+import clearcuda.CudaAvailability;
 import clearcuda.CudaComputeCapability;
 import clearcuda.CudaContext;
 import clearcuda.CudaDevice;
@@ -23,27 +24,29 @@ public class CudaModuleAndFunctionTests
 	@Test
 	public void test() throws IOException
 	{
+		if (!CudaAvailability.isClearCudaOperational())
+			return;
 
 		try (CudaDevice lCudaDevice = new CudaDevice(0);
 				CudaContext lCudaContext = new CudaContext(lCudaDevice, false);
 				CudaModule lCudaModule = CudaModule.moduleFromPTX(CudaCompilerTests.getPTX());)
 		{
 
-			CudaComputeCapability lComputeCapability = lCudaDevice.getComputeCapability();
+			final CudaComputeCapability lComputeCapability = lCudaDevice.getComputeCapability();
 			System.out.println(lComputeCapability);
 			assertNotNull(lCudaModule);
 
-			CudaFunction lFunction = lCudaModule.getFunction("bozo");
+			final CudaFunction lFunction = lCudaModule.getFunction("bozo");
 			assertNotNull(lFunction);
 
-			int length = 1024;
-			float[] a = new float[length];
+			final int length = 1024;
+			final float[] a = new float[length];
 			for (int i = 0; i < length; i++)
 				a[i] = i;
-			float[] b = new float[length];
+			final float[] b = new float[length];
 			for (int i = 0; i < length; i++)
 				b[i] = length - i;
-			float[] c = new float[length];
+			final float[] c = new float[length];
 
 			try (CudaDevicePointer lPtrA = CudaDevicePointer.malloc(length * Sizeof.FLOAT);
 					CudaDevicePointer lPtrB = CudaDevicePointer.malloc(length * Sizeof.FLOAT);

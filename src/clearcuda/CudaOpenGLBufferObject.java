@@ -20,7 +20,7 @@ public class CudaOpenGLBufferObject extends CudaDevicePointer
 
 	public void map()
 	{
-		long[] lSizeInBytes = new long[1];
+		final long[] lSizeInBytes = new long[1];
 		cuGLMapBufferObject(getPeer(), lSizeInBytes, mPixelBufferObjectId);
 		mSizeInBytes = lSizeInBytes[0];
 	}

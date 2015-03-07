@@ -355,21 +355,37 @@ public class CudaCompiler
 																					lCUFileAbsPath,
 																					lPTXFileAbsPath);
 
+		final String[] lCommandArray = lCommand.split("\\s+", -1);
+
 		System.out.println("launching: " + lCommand);
 
-		final Process process = Runtime.getRuntime().exec(lCommand);
+		final ProcessBuilder lProcessBuilder = new ProcessBuilder(lCommandArray);
+		// lProcessBuilder.inheritIO();
+		final String lExistingPath = lProcessBuilder.environment()
+																								.get("PATH");
+		final String lExtraPaths = ":/Developer/NVIDIA/CUDA-6.5/bin:/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin";
+		lProcessBuilder.environment().put("PATH",
+																			lExistingPath + lExtraPaths);
+		lProcessBuilder.redirectErrorStream(true);
+		lProcessBuilder.inheritIO();
 
-		final String errorMessage = new String(IOUtils.toByteArray(process.getErrorStream()));
-		final String outputMessage = new String(IOUtils.toByteArray(process.getInputStream()));
+		System.out.println("lProcessBuilder.environment() = " + lProcessBuilder.environment());
+
+		final Process process = lProcessBuilder.start();// Runtime.getRuntime().exec(lCommand);
+
+		// final String errorMessage = new
+		// String(IOUtils.toByteArray(process.getErrorStream()));
+		// final String outputMessage = new
+		// String(IOUtils.toByteArray(process.getInputStream()));
 
 		final int exitValue = waitFor(process);
 
 		if (exitValue != 0)
 		{
 			System.out.println("nvcc process exitValue " + exitValue);
-			System.out.println("errorMessage:\n" + errorMessage);
-			System.out.println("outputMessage:\n" + outputMessage);
-			throw new IOException("Could not create .ptx file: " + errorMessage);
+			// System.out.println("errorMessage:\n" + errorMessage);
+			// System.out.println("outputMessage:\n" + outputMessage);
+			// throw new IOException("Could not create .ptx file: " + errorMessage);
 		}
 
 	}

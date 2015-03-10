@@ -1,12 +1,12 @@
 package clearcuda;
 
-import coremem.MemoryRegionBase;
-import coremem.MemoryRegionInterface;
+import coremem.MemoryBase;
+import coremem.ContiguousMemoryInterface;
 import coremem.interfaces.MemoryType;
 import coremem.rgc.Cleaner;
 
-public class CudaMemoryRegion<T> extends MemoryRegionBase<T> implements
-																														MemoryRegionInterface<T>
+public class CudaMemoryRegion<T> extends MemoryBase<T> implements
+																														ContiguousMemoryInterface<T>
 {
 
 	private CudaHostPointer mCudaHostPointer;
@@ -26,7 +26,7 @@ public class CudaMemoryRegion<T> extends MemoryRegionBase<T> implements
 	}
 
 	@Override
-	public MemoryRegionInterface<T> subRegion(long pOffset,
+	public ContiguousMemoryInterface<T> subRegion(long pOffset,
 																				long pLenghInBytes)
 	{
 		// TODO Auto-generated method stub

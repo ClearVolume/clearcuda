@@ -19,7 +19,7 @@ public class CudaHostPointerTests
 		if (!CudaAvailability.isClearCudaOperational())
 			return;
 
-		final int lLength = 1024;
+		final int lLength = 128 * 129 * 130;
 
 		try (CudaDevice lCudaDevice = new CudaDevice(0);
 				CudaContext lCudaContext = new CudaContext(lCudaDevice, false);

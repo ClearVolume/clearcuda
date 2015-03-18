@@ -21,7 +21,7 @@ import coremem.interfaces.CopyableWithSync;
 import coremem.interfaces.HasPeer;
 import coremem.interfaces.PointerAccessible;
 
-public class CudaDevicePointer extends CopyFromToInterface implements
+public class CudaDevicePointer extends CopyFromToBase implements
 																													CudaCloseable,
 																													HasPeer<CUdeviceptr>,
 																													PointerAccessible,

@@ -16,6 +16,7 @@ import jcuda.driver.CUDA_MEMCPY3D;
 import jcuda.driver.CUarray;
 import jcuda.driver.CUarray_format;
 import jcuda.driver.CUmemorytype;
+import jcuda.driver.CUresult;
 import coremem.interfaces.HasPeer;
 
 public class CudaArray extends CopyFromToBase implements
@@ -56,6 +57,7 @@ public class CudaArray extends CopyFromToBase implements
 		mFormat = getFormat(pBytesPerChannel, pFloat, pSigned);
 
 		mCUarray = new CUarray();
+		int lCuArrayCreate;
 		if (mDepth <= 1)
 		{
 			final CUDA_ARRAY_DESCRIPTOR lAllocate3DArrayDescriptor = new CUDA_ARRAY_DESCRIPTOR();
@@ -63,7 +65,8 @@ public class CudaArray extends CopyFromToBase implements
 			lAllocate3DArrayDescriptor.Height = pHeight;
 			lAllocate3DArrayDescriptor.Format = mFormat;
 			lAllocate3DArrayDescriptor.NumChannels = (int) pNumberOfChannels;
-			cuArrayCreate(mCUarray, lAllocate3DArrayDescriptor);
+			lCuArrayCreate = cuArrayCreate(	mCUarray,
+																			lAllocate3DArrayDescriptor);
 		}
 		else
 		{
@@ -75,8 +78,13 @@ public class CudaArray extends CopyFromToBase implements
 			lAllocate3DArrayDescriptor.NumChannels = (int) pNumberOfChannels;
 			if (pEnableSurface)
 				lAllocate3DArrayDescriptor.Flags = CUDA_ARRAY3D_SURFACE_LDST;
-			cuArray3DCreate(mCUarray, lAllocate3DArrayDescriptor);
+			lCuArrayCreate = cuArray3DCreate(	mCUarray,
+																				lAllocate3DArrayDescriptor);
 		}
+
+		if (lCuArrayCreate != CUresult.CUDA_SUCCESS)
+			throw new CudaException("Could not allocate array");
+
 		cuCtxSynchronize();
 	}
 

@@ -28,6 +28,10 @@ public class CudaDeviceTests
 				System.out.println("________________________________________________");
 				System.out.println("CudaDevice " + lCudaDevice);
 
+				System.out.println("CU_DEVICE_ATTRIBUTE_MULTIPROCESSOR_COUNT=" + lCudaDevice.getAttribute(CUdevice_attribute.CU_DEVICE_ATTRIBUTE_MULTIPROCESSOR_COUNT));
+				System.out.println("CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_MULTIPROCESSOR=" + lCudaDevice.getAttribute(CUdevice_attribute.CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_MULTIPROCESSOR));
+				System.out.println("CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_BLOCK=" + lCudaDevice.getAttribute(CUdevice_attribute.CU_DEVICE_ATTRIBUTE_MAX_THREADS_PER_BLOCK));
+				System.out.println("CU_DEVICE_ATTRIBUTE_WARP_SIZE=" + lCudaDevice.getAttribute(CUdevice_attribute.CU_DEVICE_ATTRIBUTE_WARP_SIZE));
 				System.out.println("clockRate=" + lCudaDevice.getProperties().clockRate);
 				System.out.println("memPitch=" + lCudaDevice.getProperties().memPitch);
 				System.out.println("regsPerBlock=" + lCudaDevice.getProperties().regsPerBlock);

@@ -109,15 +109,24 @@ public abstract class CopyFromToBase
 	public void copyFrom(	ContiguousMemoryInterface pContiguousMemoryInterface,
 												boolean pSync)
 	{
-		copyFrom(	JCudaPointerUtils.pointTo(pContiguousMemoryInterface),
+		pContiguousMemoryInterface.complainIfFreed();
+		final Pointer lPointTo = JCudaPointerUtils.pointTo(pContiguousMemoryInterface);
+		// final long lStartNs = System.nanoTime();
+		copyFrom(	lPointTo,
 							pSync);
+		// final long lStopNs = System.nanoTime();
+		// System.out.println("ELPASED:" + (lStopNs - lStartNs) / 1.0e6);
+		pContiguousMemoryInterface.complainIfFreed();
 	}
 
 	public void copyTo(	ContiguousMemoryInterface pContiguousMemoryInterface,
 											boolean pSync)
 	{
-		copyTo(	JCudaPointerUtils.pointTo(pContiguousMemoryInterface),
+		pContiguousMemoryInterface.complainIfFreed();
+		final Pointer lPointTo = JCudaPointerUtils.pointTo(pContiguousMemoryInterface);
+		copyTo(lPointTo,
 						pSync);
+		pContiguousMemoryInterface.complainIfFreed();
 	}
 
 

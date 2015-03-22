@@ -21,6 +21,8 @@ public class CudaDevice implements CudaCloseable
 		try
 		{
 			cuInit(0);
+			JCuda.setExceptionsEnabled(true);
+			JCudaDriver.setExceptionsEnabled(true);
 			sCudaInitialized = true;
 		}
 		catch (final Throwable e)

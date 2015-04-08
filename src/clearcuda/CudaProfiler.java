@@ -17,7 +17,6 @@ public class CudaProfiler
 	public CudaProfiler(File pConfigFile, File pOutputFile)
 	{
 		super();
-		// TODO Auto-generated constructor stub
 		mConfigFile = pConfigFile;
 		mOutputFile = pOutputFile;
 		cuProfilerInitialize(	pConfigFile.getAbsolutePath(),

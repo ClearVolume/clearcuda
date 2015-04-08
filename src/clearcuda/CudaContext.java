@@ -10,20 +10,21 @@ import static jcuda.driver.JCudaDriver.cuGLCtxCreate;
 import jcuda.CudaException;
 import jcuda.driver.CUcontext;
 import jcuda.driver.CUctx_flags;
+import coremem.interfaces.HasPeer;
 
-public class CudaContext implements
-												CudaCloseable,
-												PeerInterface<CUcontext>
+public class CudaContext implements CudaCloseable, HasPeer<CUcontext>
 {
 	private CUcontext mCUcontext = new CUcontext();
 	private final CudaDevice mCudaDevice;
-	private boolean mEnableHostMapping = false;
+	private final boolean mEnableHostMapping = false;
 
 	public CudaContext(CudaDevice pCudaDevice, boolean pOpenGLInterop)
 	{
 		super();
 		mCudaDevice = pCudaDevice;
 		int lFlags = mEnableHostMapping ? CUctx_flags.CU_CTX_MAP_HOST : 0;
+		lFlags |= CUctx_flags.CU_CTX_SCHED_BLOCKING_SYNC;
+		lFlags |= CUctx_flags.CU_CTX_SCHED_AUTO;
 		if (pOpenGLInterop)
 			cuGLCtxCreate(mCUcontext, lFlags, pCudaDevice.getPeer());
 		else
@@ -42,14 +43,14 @@ public class CudaContext implements
 
 	public CUcontext popCurrent()
 	{
-		CUcontext lOldContext = new CUcontext();
+		final CUcontext lOldContext = new CUcontext();
 		cuCtxPopCurrent(lOldContext);
 		return lOldContext;
 	}
 
 	public CUcontext pushCurrent()
 	{
-		CUcontext lOldContext = new CUcontext();
+		final CUcontext lOldContext = new CUcontext();
 		cuCtxPushCurrent(lOldContext);
 		return lOldContext;
 	}
@@ -66,6 +67,7 @@ public class CudaContext implements
 		// cuCtxSetCurrent(null);
 	}
 
+	@Override
 	public CUcontext getPeer()
 	{
 		return mCUcontext;

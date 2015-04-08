@@ -55,7 +55,6 @@ public class CudaModuleAndFunctionTests
 				lPtrA.copyFrom(a, true);
 				lPtrB.copyFrom(b, true);
 
-
 				lFunction.setBlockDim(32);
 				lFunction.setGridDim(1024 / 32);
 				lFunction.launch(length, lPtrA, lPtrB, lPtrC);

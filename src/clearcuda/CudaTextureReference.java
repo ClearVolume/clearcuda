@@ -8,11 +8,12 @@ import static jcuda.driver.JCudaDriver.cuTexRefSetFilterMode;
 import static jcuda.driver.JCudaDriver.cuTexRefSetFlags;
 import static jcuda.driver.JCudaDriver.cuTexRefSetFormat;
 import jcuda.driver.CUtexref;
+import coremem.interfaces.HasPeer;
 
-public class CudaTextureReference implements PeerInterface<CUtexref>
+public class CudaTextureReference implements HasPeer<CUtexref>
 {
 
-	private final CUtexref mCUtexref = new CUtexref();;
+	private final CUtexref mCUtexref = new CUtexref();
 	private final String mTextureName;
 
 	public CudaTextureReference(CudaModule pCudaModule,
@@ -47,6 +48,7 @@ public class CudaTextureReference implements PeerInterface<CUtexref>
 		cuTexRefSetFlags(mCUtexref, pFlags);
 	}
 
+	@Override
 	public CUtexref getPeer()
 	{
 		return mCUtexref;
@@ -62,6 +64,5 @@ public class CudaTextureReference implements PeerInterface<CUtexref>
 	{
 		return "CudaTextureReference [mTextureName=" + mTextureName + "]";
 	}
-
 
 }

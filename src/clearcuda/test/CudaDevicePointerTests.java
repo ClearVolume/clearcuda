@@ -60,6 +60,10 @@ public class CudaDevicePointerTests
 					assertEquals(123, lFloatsOut[lLength / 2], 0);
 				}
 			}
+			else
+			{
+				System.out.println("Managed memory not supported!");
+			}
 		}
 	}
 

@@ -7,10 +7,9 @@ import java.io.File;
 
 import jcuda.CudaException;
 import jcuda.driver.CUmodule;
+import coremem.interfaces.HasPeer;
 
-public class CudaModule	implements
-												CudaCloseable,
-												PeerInterface<CUmodule>
+public class CudaModule implements CudaCloseable, HasPeer<CUmodule>
 {
 
 	private CUmodule mCUmodule;
@@ -83,7 +82,5 @@ public class CudaModule	implements
 	{
 		return "CudaModule [mPTXFile=" + mPTXFile + "]";
 	}
-	
-	
 
 }

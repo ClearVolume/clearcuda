@@ -3,13 +3,19 @@ package clearcuda.utils;
 import java.lang.reflect.Field;
 
 import jcuda.Pointer;
+import coremem.ContiguousMemoryInterface;
 
 public class JCudaPointerUtils
 {
 
+	public static Pointer pointTo(ContiguousMemoryInterface pContiguousMemoryInterface)
+	{
+		return create(pContiguousMemoryInterface.getAddress());
+	}
+
 	public static Pointer create(long pNativeAddress)
 	{
-		Pointer lPointer = new Pointer();
+		final Pointer lPointer = new Pointer();
 		setNativeAddress(lPointer, pNativeAddress);
 		return lPointer;
 	}
@@ -18,9 +24,9 @@ public class JCudaPointerUtils
 	{
 		try
 		{
-			Field lField = getField(Pointer.class, "nativePointer");
+			final Field lField = getField(Pointer.class, "nativePointer");
 			lField.setAccessible(true);
-			long lNativeAddress = lField.getLong(pPointer);
+			final long lNativeAddress = lField.getLong(pPointer);
 			lField.setAccessible(false);
 			return lNativeAddress;
 		}
@@ -37,7 +43,7 @@ public class JCudaPointerUtils
 	{
 		try
 		{
-			Field lField = getField(Pointer.class, "nativePointer");
+			final Field lField = getField(Pointer.class, "nativePointer");
 			lField.setAccessible(true);
 			lField.setLong(pPointer, pNativeAddress);
 			lField.setAccessible(false);
@@ -55,9 +61,9 @@ public class JCudaPointerUtils
 		{
 			return clazz.getDeclaredField(fieldName);
 		}
-		catch (NoSuchFieldException e)
+		catch (final NoSuchFieldException e)
 		{
-			Class<?> superClass = clazz.getSuperclass();
+			final Class<?> superClass = clazz.getSuperclass();
 			if (superClass == null)
 			{
 				throw e;

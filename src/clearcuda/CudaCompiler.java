@@ -27,7 +27,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.io.IOUtils;
 
-import clearcuda.utils.CPPCompiler;
 import clearcuda.utils.NVCC;
 
 public class CudaCompiler
@@ -36,7 +35,6 @@ public class CudaCompiler
 	private static final String cHashAlgo = "SHA-256";
 	private static final File cCompilationRootFolder = new File(System.getProperty("user.home"),
 																															".clearcuda");
-
 
 	private CudaDevice mCudaDevice;
 
@@ -88,8 +86,8 @@ public class CudaCompiler
 		for (final String lResourcePath : pRessourcePaths)
 		{
 			final File lFile = addFile(	pRootClass,
-														lResourcePath,
-														pStripPrefixPath);
+																	lResourcePath,
+																	pStripPrefixPath);
 			lFileList.add(lFile);
 		}
 		return lFileList;
@@ -101,7 +99,8 @@ public class CudaCompiler
 		return addFiles(pRootClass, false, pRessourcePaths);
 	}
 
-	public File addFile(final Class<?> pClass, final String pRessourcePath) throws IOException
+	public File addFile(final Class<?> pClass,
+											final String pRessourcePath) throws IOException
 	{
 		return addFile(pClass, pRessourcePath, false);
 	}
@@ -113,9 +112,9 @@ public class CudaCompiler
 		final InputStream lInputStreamCUFile = pClass.getResourceAsStream(pRessourcePath);
 		final StringWriter writer = new StringWriter();
 
-		final InputStreamReader in =
-				new InputStreamReader( lInputStreamCUFile, Charset.defaultCharset() );
-		IOUtils.copy( in, writer );
+		final InputStreamReader in = new InputStreamReader(	lInputStreamCUFile,
+																												Charset.defaultCharset());
+		IOUtils.copy(in, writer);
 
 		String lCUFileString = writer.toString();
 
@@ -134,19 +133,21 @@ public class CudaCompiler
 		final File lDestinationFile = new File(	mCompilationFolder,
 																						pStripPrefixPath ? lSourceFile.getName()
 																														: lSourceFile.getPath());
-//		This is the line we wanted to use:
-//			FileUtils.write(lDestinationFile, lCUFileString);
-//		And this is the block we have to use for Fiji compatibility:
+		// This is the line we wanted to use:
+		// FileUtils.write(lDestinationFile, lCUFileString);
+		// And this is the block we have to use for Fiji compatibility:
 		OutputStream out = null;
-		try {
-			out = openOutputStream( lDestinationFile, false );
-			out.write( lCUFileString.getBytes( Charset.defaultCharset() ) );
+		try
+		{
+			out = openOutputStream(lDestinationFile, false);
+			out.write(lCUFileString.getBytes(Charset.defaultCharset()));
 			out.close(); // don't swallow close Exception if copy completes normally
 		}
-		finally {
-			IOUtils.closeQuietly( out );
+		finally
+		{
+			IOUtils.closeQuietly(out);
 		}
-//		End: Fiji compatibility block.
+		// End: Fiji compatibility block.
 
 		mFileList.add(lDestinationFile);
 
@@ -159,18 +160,35 @@ public class CudaCompiler
 	 * @return
 	 * @throws IOException
 	 */
-	private OutputStream openOutputStream( final File file, final boolean append )
-			throws IOException {
-		if ( file.exists() ) {
-			if ( file.isDirectory() ) { throw new IOException( "File '" + file + "' exists but is a directory" ); }
-			if ( file.canWrite() == false ) { throw new IOException( "File '" + file + "' cannot be written to" ); }
-		} else {
-			final File parent = file.getParentFile();
-			if ( parent != null ) {
-				if ( !parent.mkdirs() && !parent.isDirectory() ) { throw new IOException( "Directory '" + parent + "' could not be created" ); }
+	private OutputStream openOutputStream(final File file,
+																				final boolean append) throws IOException
+	{
+		if (file.exists())
+		{
+			if (file.isDirectory())
+			{
+				throw new IOException("File '" + file
+															+ "' exists but is a directory");
+			}
+			if (file.canWrite() == false)
+			{
+				throw new IOException("File '" + file
+															+ "' cannot be written to");
 			}
 		}
-		return new FileOutputStream( file, append );
+		else
+		{
+			final File parent = file.getParentFile();
+			if (parent != null)
+			{
+				if (!parent.mkdirs() && !parent.isDirectory())
+				{
+					throw new IOException("Directory '" + parent
+																+ "' could not be created");
+				}
+			}
+		}
+		return new FileOutputStream(file, append);
 	}
 
 	public File compile(final File pPrimaryFile) throws IOException
@@ -179,8 +197,8 @@ public class CudaCompiler
 		final String lHashPrefix = String.format(".%d", lHash);
 
 		final File lPTXFile = new File(pPrimaryFile.getAbsolutePath()
-																					.replace(	".cu",
-																										lHashPrefix + ".ptx"));
+																								.replace(	".cu",
+																													lHashPrefix + ".ptx"));
 
 		mPTXFile = lPTXFile;
 
@@ -195,7 +213,6 @@ public class CudaCompiler
 
 		return getPTXFile();
 	}
-
 
 	public void purge() throws IOException
 	{
@@ -229,14 +246,23 @@ public class CudaCompiler
 	}
 
 	private long computeFileHash(final File pFile) throws FileNotFoundException,
-																					IOException
+																								IOException
 	{
-		final int lFileLength = (int)(Files.size(pFile.toPath()));
+
+		final int lFileLength = (int) (Files.size(pFile.toPath()));
 		final byte[] lBuffer = new byte[lFileLength];
 
-//		IOUtils.readFully( new FileInputStream( pFile ), lBuffer );
-		final int actual = read( new FileInputStream( pFile ), lBuffer, 0, lBuffer.length );
-		if ( actual != lBuffer.length ) { throw new EOFException( "Length to read: " + lBuffer.length + " actual: " + actual ); }
+		// IOUtils.readFully( new FileInputStream( pFile ), lBuffer );
+		final int actual = read(new FileInputStream(pFile),
+														lBuffer,
+														0,
+														lBuffer.length);
+		if (actual != lBuffer.length)
+		{
+			throw new EOFException("Length to read: " + lBuffer.length
+															+ " actual: "
+															+ actual);
+		}
 
 		final byte[] lDigest = mMessageDigest.digest(lBuffer);
 
@@ -250,18 +276,25 @@ public class CudaCompiler
 		return abs(lHashCode);
 	}
 
-	public static int read(
-			final InputStream input,
-			final byte[] buffer,
-			final int offset,
-			final int length ) throws IOException {
+	public static int read(	final InputStream input,
+													final byte[] buffer,
+													final int offset,
+													final int length) throws IOException
+	{
 		final int EOF = -1;
-		if ( length < 0 ) { throw new IllegalArgumentException( "Length must not be negative: " + length ); }
+		if (length < 0)
+		{
+			throw new IllegalArgumentException("Length must not be negative: " + length);
+		}
 		int remaining = length;
-		while ( remaining > 0 ) {
+		while (remaining > 0)
+		{
 			final int location = length - remaining;
-			final int count = input.read( buffer, offset + location, remaining );
-			if ( EOF == count ) { // EOF
+			final int count = input.read(	buffer,
+																		offset + location,
+																		remaining);
+			if (EOF == count)
+			{ // EOF
 				break;
 			}
 			remaining -= count;
@@ -288,7 +321,7 @@ public class CudaCompiler
 		final String lCUFileFolderAbsPath = pCUFile.getParentFile()
 																								.getAbsolutePath();
 		final String lModelString = "-m" + System.getProperty("sun.arch.data.model");
-		final String lCPPCompilerAbsPath = CPPCompiler.find();
+		// final String lCPPCompilerAbsPath = CPPCompiler.find();
 		final String lCUFileAbsPath = pCUFile.getAbsolutePath();
 		final String lPTXFileAbsPath = pPTXFile.getAbsolutePath();
 
@@ -308,8 +341,8 @@ public class CudaCompiler
 
 		final String lOptimizationLevel = "-O" + mOptimizationLevel;
 
-		final String lFastMathString = mUseFastMath ? "--use_fast_math"
-																					: "";
+		final String lFastMathString = mUseFastMath	? "--use_fast_math"
+																								: "";
 
 		final String lCommand = String.format("%s  -I. -I %s %s %s %s %s %s -ptx %s -o %s",
 																					lNVCCAbsPath,
@@ -322,21 +355,37 @@ public class CudaCompiler
 																					lCUFileAbsPath,
 																					lPTXFileAbsPath);
 
+		final String[] lCommandArray = lCommand.split("\\s+", -1);
+
 		System.out.println("launching: " + lCommand);
 
-		final Process process = Runtime.getRuntime().exec(lCommand);
+		final ProcessBuilder lProcessBuilder = new ProcessBuilder(lCommandArray);
+		// lProcessBuilder.inheritIO();
+		final String lExistingPath = lProcessBuilder.environment()
+																								.get("PATH");
+		final String lExtraPaths = ":/Developer/NVIDIA/CUDA-6.5/bin:/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin";
+		lProcessBuilder.environment().put("PATH",
+																			lExistingPath + lExtraPaths);
+		lProcessBuilder.redirectErrorStream(true);
+		lProcessBuilder.inheritIO();
 
-		final String errorMessage = new String(IOUtils.toByteArray(process.getErrorStream()));
-		final String outputMessage = new String(IOUtils.toByteArray(process.getInputStream()));
+		System.out.println("lProcessBuilder.environment() = " + lProcessBuilder.environment());
+
+		final Process process = lProcessBuilder.start();// Runtime.getRuntime().exec(lCommand);
+
+		// final String errorMessage = new
+		// String(IOUtils.toByteArray(process.getErrorStream()));
+		// final String outputMessage = new
+		// String(IOUtils.toByteArray(process.getInputStream()));
 
 		final int exitValue = waitFor(process);
 
 		if (exitValue != 0)
 		{
 			System.out.println("nvcc process exitValue " + exitValue);
-			System.out.println("errorMessage:\n" + errorMessage);
-			System.out.println("outputMessage:\n" + outputMessage);
-			throw new IOException("Could not create .ptx file: " + errorMessage);
+			// System.out.println("errorMessage:\n" + errorMessage);
+			// System.out.println("outputMessage:\n" + outputMessage);
+			// throw new IOException("Could not create .ptx file: " + errorMessage);
 		}
 
 	}

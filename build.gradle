@@ -1,6 +1,4 @@
-plugins {
-	id "com.jfrog.bintray" version "1.0"
-}
+plugins { id "com.jfrog.bintray" version "1.0" }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
@@ -55,21 +53,25 @@ dependencies
 	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.1'
 	compile 'net.sf.trove4j:trove4j:3.0.3'
 
-
 	compile group: 'junit', name: 'junit', version: '4.12'
 	testCompile group: 'junit', name: 'junit', version: '4.12'
 
+	compile group: "net.coremem", name: "CoreMem", version: "(,1.0.0]", changing: true, transitive:true
 	compile group: "de.jcuda", name: "jcuda-maven", version: "6.5", transitive: true
-	//compile fileTree(dir: 'libs/jcuda', include: '*.jar')
+
 }
 
 repositories
 {
+
 	mavenCentral()
 	maven
 	{ url "http://oss.sonatype.org/content/groups/public" }
 	maven
 	{ url  "http://dl.bintray.com/clearvolume/ClearVolume" }
+	maven
+	{ url  "http://dl.bintray.com/rtlib/CoreMem" }
+	
 
 }
 
@@ -99,7 +101,7 @@ if (JavaVersion.current().isJava8Compatible()) {
 // BINTRAY PUBLISHING
 
 group = 'net.clearvolume'
-version = '1.0'
+version = '0.9.0'
 
 artifacts
 {
@@ -158,10 +160,10 @@ if(hasProperty('bintray_user') && hasProperty('bintray_key') )
 			//attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
 			//Optional version descriptor
 			version {
-				name = '1.0' //Bintray logical version name
+				name = project.version //Bintray logical version name
 				desc = '.'
 				released  = new java.util.Date()
-				vcsTag = '1.0.0'
+				vcsTag = project.version
 				/*attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin'] //Optional version-level attributes
 				 gpg {
 				 sign = false //Determines whether to GPG sign the files. The default is false

@@ -1,6 +1,7 @@
 package clearcuda;
 
 import static jcuda.driver.JCudaDriver.CU_MEMHOSTALLOC_DEVICEMAP;
+import static jcuda.driver.JCudaDriver.CU_MEMHOSTALLOC_PORTABLE;
 import static jcuda.driver.JCudaDriver.CU_MEMHOSTALLOC_WRITECOMBINED;
 import static jcuda.driver.JCudaDriver.cuMemFreeHost;
 import static jcuda.driver.JCudaDriver.cuMemHostAlloc;
@@ -13,12 +14,12 @@ import jcuda.Pointer;
 public class CudaHostPointer extends CudaDevicePointer
 {
 
-	protected Pointer mPointer;
-	protected long mSizeInBytes;
+	private Pointer mPointer;
 	protected boolean mGPUMapped;
 	protected boolean mCudaAllocated;
 
 	private boolean mFastGPUWriteButSlowCPURead;
+
 
 	public static CudaHostPointer mallocPinned(long pSizeInBytes)
 	{
@@ -30,15 +31,19 @@ public class CudaHostPointer extends CudaDevicePointer
 																							boolean pFastGPUWriteButSlowCPURead)
 	{
 
-		int lGPUMappedFlag = pGPUMapped ? CU_MEMHOSTALLOC_DEVICEMAP : 0;
-		int lFastGPUWriteButSlowCPURead = pFastGPUWriteButSlowCPURead	? CU_MEMHOSTALLOC_WRITECOMBINED
+		final int lGPUMappedFlag = pGPUMapped ? CU_MEMHOSTALLOC_DEVICEMAP : 0;
+		final int lFastGPUWriteButSlowCPURead = pFastGPUWriteButSlowCPURead	? CU_MEMHOSTALLOC_WRITECOMBINED
 																																	: 0;
-		int lFlags = lGPUMappedFlag | lFastGPUWriteButSlowCPURead;
+		final int lFlags = CU_MEMHOSTALLOC_PORTABLE | lGPUMappedFlag
+												| lFastGPUWriteButSlowCPURead;
 
-		Pointer lPointer = new Pointer();
-		cuMemHostAlloc(lPointer, pSizeInBytes, lFlags);
+		final Pointer lPointer = new Pointer();
+		final int lCuMemHostAlloc = cuMemHostAlloc(	lPointer,
+																								pSizeInBytes,
+																								lFlags);
 
-		CudaHostPointer lCudaHostPointer = new CudaHostPointer(	true,
+
+		final CudaHostPointer lCudaHostPointer = new CudaHostPointer(	true,
 																														lPointer,
 																														pSizeInBytes,
 																														pGPUMapped,
@@ -51,11 +56,11 @@ public class CudaHostPointer extends CudaDevicePointer
 																							long pSizeInBytes,
 																							boolean pGPUMapped)
 	{
-		int lGPUMappedFlag = pGPUMapped ? CU_MEMHOSTALLOC_DEVICEMAP : 0;
-		int lFlags = lGPUMappedFlag;
+		final int lGPUMappedFlag = pGPUMapped ? CU_MEMHOSTALLOC_DEVICEMAP : 0;
+		final int lFlags = lGPUMappedFlag;
 		cuMemHostRegister(pPointer, pSizeInBytes, lFlags);
 
-		CudaHostPointer lCudaHostPointer = new CudaHostPointer(	false,
+		final CudaHostPointer lCudaHostPointer = new CudaHostPointer(	false,
 																														pPointer,
 																														pSizeInBytes,
 																														pGPUMapped);
@@ -98,5 +103,11 @@ public class CudaHostPointer extends CudaDevicePointer
 		}
 		super.close();
 	}
+
+	public Pointer getPointer()
+	{
+		return mPointer;
+	}
+
 
 }

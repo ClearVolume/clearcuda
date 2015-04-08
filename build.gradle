@@ -57,7 +57,7 @@ dependencies
 	compile group: 'junit', name: 'junit', version: '4.12'
 	testCompile group: 'junit', name: 'junit', version: '4.12'
 
-	compile group: "net.coremem", name: "CoreMem", version: "0.1", changing: true, transitive:true
+	compile group: "net.coremem", name: "CoreMem", version: "(,1.0.0]", changing: true, transitive:true
 	compile group: "de.jcuda", name: "jcuda-maven", version: "6.5", transitive: true
 
 }
@@ -102,7 +102,7 @@ if (JavaVersion.current().isJava8Compatible()) {
 // BINTRAY PUBLISHING
 
 group = 'net.clearvolume'
-version = '1.0'
+version = '0.9.0'
 
 artifacts
 {
@@ -161,10 +161,10 @@ if(hasProperty('bintray_user') && hasProperty('bintray_key') )
 			//attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
 			//Optional version descriptor
 			version {
-				name = '1.0' //Bintray logical version name
+				name = version //Bintray logical version name
 				desc = '.'
 				released  = new java.util.Date()
-				vcsTag = '1.0.0'
+				vcsTag = version
 				/*attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin'] //Optional version-level attributes
 				 gpg {
 				 sign = false //Determines whether to GPG sign the files. The default is false

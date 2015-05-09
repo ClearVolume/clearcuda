@@ -1,11 +1,11 @@
 package clearcuda;
 
-import clearcuda.test.CudaCompilerTests;
-import clearcuda.utils.NVCC;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
-import static org.junit.Assert.assertEquals;
+import clearcuda.test.CudaCompilerTests;
+import clearcuda.utils.NVCC;
 
 public class CudaAvailability
 {
@@ -17,7 +17,7 @@ public class CudaAvailability
 							&& isCudaCompilerWorking()
 							&& isCudaMemoryCopyWorking();
 		}
-		catch (Throwable e)
+		catch (final Throwable e)
 		{
 			System.err.println(e.getLocalizedMessage());
 			System.out.println("CUDA NOT AVAILABLE");
@@ -29,19 +29,19 @@ public class CudaAvailability
 	{
 		try
 		{
-			CudaCompiler lCUDACompiler = new CudaCompiler(null, "test");
+			final CudaCompiler lCUDACompiler = new CudaCompiler(null, "test");
 
 			lCUDACompiler.setParameter("funcname", "bozo");
 
-			File lPrimaryFile = lCUDACompiler.addFile(CudaCompilerTests.class,
+			final File lPrimaryFile = lCUDACompiler.addFile(CudaCompilerTests.class,
 																								"cu/example.cu");
 			lCUDACompiler.addFile(CudaCompilerTests.class,
 														"cu/helper_math.h");
 
-			File lPTX = lCUDACompiler.compile(lPrimaryFile);
+			final File lPTX = lCUDACompiler.compile(lPrimaryFile);
 			return lPTX.exists();
 		}
-		catch (Throwable e)
+		catch (final Throwable e)
 		{
 			System.err.println(e.getLocalizedMessage());
 			e.printStackTrace();
@@ -54,35 +54,42 @@ public class CudaAvailability
 	{
 		try
 		{
-			long lChannels = 2;
-			long lWidth = 128;
-			long lHeight = 1;
-			long lDepth = 1;
-			int lLength = (int) (lChannels * lWidth * lHeight * lDepth);
+			final long lChannels = 2;
+			final long lWidth = 128;
+			final long lHeight = 1;
+			final long lDepth = 1;
+			final int lLength = (int) (lChannels * lWidth * lHeight * lDepth);
 
-			try (CudaDevice lCudaDevice = new CudaDevice(0);
-					CudaContext lCudaContext = new CudaContext(	lCudaDevice,
-																											false);
-					CudaArray lCudaArray = new CudaArray(	lChannels,
-																								lWidth,
-																								lHeight,
-																								lDepth,
-																								4,
-																								true,
-																								false,
-																								true))
+			final CudaDevice lCudaDevice = new CudaDevice(0);
+			final CudaContext lCudaContext = new CudaContext(	lCudaDevice,
+																												false);
+			final CudaArray lCudaArray = new CudaArray(	lChannels,
+																									lWidth,
+																									lHeight,
+																									lDepth,
+																									4,
+																									true,
+																									false,
+																									true);
+			try
 			{
-				float[] lFloatsIn = new float[lLength];
+				final float[] lFloatsIn = new float[lLength];
 				lFloatsIn[lLength / 2] = 123;
 				lCudaArray.copyFrom(lFloatsIn, true);
 
-				float[] lFloatsOut = new float[lLength];
+				final float[] lFloatsOut = new float[lLength];
 				lCudaArray.copyTo(lFloatsOut, true);
 				assertEquals(123, lFloatsOut[lLength / 2], 0);
 			}
+			finally
+			{
+				lCudaArray.close();
+				lCudaContext.close();
+				lCudaDevice.close();
+			}
 			return true;
 		}
-		catch (Throwable e)
+		catch (final Throwable e)
 		{
 			System.err.println(e.getLocalizedMessage());
 			System.err.println("CUDA KERNEL TEST CALL FAILED!");
@@ -95,10 +102,10 @@ public class CudaAvailability
 		boolean lCompilerIsAvailable;
 		try
 		{
-			File lNVCCCompiler = NVCC.find();
+			final File lNVCCCompiler = NVCC.find();
 			lCompilerIsAvailable = lNVCCCompiler.exists();
 		}
-		catch (Throwable e)
+		catch (final Throwable e)
 		{
 			System.err.println(e.getLocalizedMessage());
 			System.out.println("CUDA COMPILER NOT AVAILABLE");

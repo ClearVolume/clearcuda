@@ -27,9 +27,11 @@ public class CudaModuleAndFunctionTests
 		if (!CudaAvailability.isClearCudaOperational())
 			return;
 
-		try (CudaDevice lCudaDevice = new CudaDevice(0);
-				CudaContext lCudaContext = new CudaContext(lCudaDevice, false);
-				CudaModule lCudaModule = CudaModule.moduleFromPTX(CudaCompilerTests.getPTX());)
+		final CudaDevice lCudaDevice = new CudaDevice(0);
+		final CudaContext lCudaContext = new CudaContext(	lCudaDevice,
+																											false);
+		final CudaModule lCudaModule = CudaModule.moduleFromPTX(CudaCompilerTests.getPTX());
+		try
 		{
 
 			final CudaComputeCapability lComputeCapability = lCudaDevice.getComputeCapability();
@@ -48,9 +50,11 @@ public class CudaModuleAndFunctionTests
 				b[i] = length - i;
 			final float[] c = new float[length];
 
-			try (CudaDevicePointer lPtrA = CudaDevicePointer.malloc(length * Sizeof.FLOAT);
-					CudaDevicePointer lPtrB = CudaDevicePointer.malloc(length * Sizeof.FLOAT);
-					CudaDevicePointer lPtrC = CudaDevicePointer.malloc(length * Sizeof.FLOAT);)
+			CudaDevicePointer lPtrA = CudaDevicePointer.malloc(length * Sizeof.FLOAT);
+			CudaDevicePointer lPtrB = CudaDevicePointer.malloc(length * Sizeof.FLOAT);
+			CudaDevicePointer lPtrC = CudaDevicePointer.malloc(length * Sizeof.FLOAT);
+
+			try
 			{
 				lPtrA.copyFrom(a, true);
 				lPtrB.copyFrom(b, true);
@@ -63,10 +67,17 @@ public class CudaModuleAndFunctionTests
 				for (int i = 0; i < length; i++)
 					assertEquals(length, c[i], 0);
 			}
+			finally
+			{
+				lPtrA.close();
+				lPtrB.close();
+				lPtrC.close();
+			}
 
-			try (CudaHostPointer lPtrA = CudaHostPointer.mallocPinned(length * Sizeof.FLOAT);
-					CudaHostPointer lPtrB = CudaHostPointer.mallocPinned(length * Sizeof.FLOAT);
-					CudaHostPointer lPtrC = CudaHostPointer.mallocPinned(length * Sizeof.FLOAT);)
+			lPtrA = CudaHostPointer.mallocPinned(length * Sizeof.FLOAT);
+			lPtrB = CudaHostPointer.mallocPinned(length * Sizeof.FLOAT);
+			lPtrC = CudaHostPointer.mallocPinned(length * Sizeof.FLOAT);
+			try
 			{
 				lPtrA.copyFrom(a, true);
 				lPtrB.copyFrom(b, true);
@@ -79,8 +90,20 @@ public class CudaModuleAndFunctionTests
 				for (int i = 0; i < length; i++)
 					assertEquals(length, c[i], 0);
 			}
+			finally
+			{
+				lPtrA.close();
+				lPtrB.close();
+				lPtrC.close();
+			}
+
+		}
+		finally
+		{
+			lCudaDevice.close();
+			lCudaContext.close();
+			lCudaModule.close();
 		}
 
 	}
-
 }

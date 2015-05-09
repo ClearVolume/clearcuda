@@ -30,8 +30,7 @@ public class JCudaPointerUtils
 			lField.setAccessible(false);
 			return lNativeAddress;
 		}
-		catch (NoSuchFieldException | SecurityException
-				| IllegalArgumentException | IllegalAccessException e)
+		catch (final Throwable e)
 		{
 			e.printStackTrace();
 		}
@@ -48,8 +47,7 @@ public class JCudaPointerUtils
 			lField.setLong(pPointer, pNativeAddress);
 			lField.setAccessible(false);
 		}
-		catch (NoSuchFieldException | SecurityException
-				| IllegalArgumentException | IllegalAccessException e)
+		catch (final Throwable e)
 		{
 			e.printStackTrace();
 		}

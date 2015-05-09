@@ -24,16 +24,18 @@ public class CudaArrayTests
 		final long lDepth = 1;
 		final int lLength = (int) (lChannels * lWidth * lHeight * lDepth);
 
-		try (CudaDevice lCudaDevice = new CudaDevice(0);
-				CudaContext lCudaContext = new CudaContext(lCudaDevice, false);
-				CudaArray lCudaArray = new CudaArray(	lChannels,
-																							lWidth,
-																							lHeight,
-																							lDepth,
-																							4,
-																							true,
-																							false,
-																							true))
+		final CudaDevice lCudaDevice = new CudaDevice(0);
+		final CudaContext lCudaContext = new CudaContext(	lCudaDevice,
+																											false);
+		final CudaArray lCudaArray = new CudaArray(	lChannels,
+																								lWidth,
+																								lHeight,
+																								lDepth,
+																								4,
+																								true,
+																								false,
+																								true);
+		try
 		{
 			final float[] lFloatsIn = new float[lLength];
 			lFloatsIn[lLength / 2] = 123;
@@ -42,6 +44,12 @@ public class CudaArrayTests
 			final float[] lFloatsOut = new float[lLength];
 			lCudaArray.copyTo(lFloatsOut, true);
 			assertEquals(123, lFloatsOut[lLength / 2], 0);
+		}
+		finally
+		{
+			lCudaArray.close();
+			lCudaContext.close();
+			lCudaArray.close();
 		}
 
 	}

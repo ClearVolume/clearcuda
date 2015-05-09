@@ -25,9 +25,11 @@ public class CudaMemoryTests
 
 		final int lLength = 1024;
 
-		try (CudaDevice lCudaDevice = new CudaDevice(0);
-				CudaContext lCudaContext = new CudaContext(lCudaDevice, false);
-				CudaHostPointer lCudaHostPointer = CudaHostPointer.mallocPinned(lLength * Sizeof.FLOAT))
+		final CudaDevice lCudaDevice = new CudaDevice(0);
+		final CudaContext lCudaContext = new CudaContext(	lCudaDevice,
+																											false);
+		final CudaHostPointer lCudaHostPointer = CudaHostPointer.mallocPinned(lLength * Sizeof.FLOAT);
+		try
 		{
 			final float[] lFloatsIn = new float[lLength];
 			lFloatsIn[lLength / 2] = 123;
@@ -42,6 +44,12 @@ public class CudaMemoryTests
 			assertEquals(123, lCudaMemory.getFloatAligned(lLength / 2), 0);
 
 		}
+		finally
+		{
+			lCudaHostPointer.close();
+			lCudaContext.close();
+			lCudaDevice.close();
+		}
 
 	}
 
@@ -54,24 +62,33 @@ public class CudaMemoryTests
 
 		final int lLength = 1024;
 
-		try (CudaDevice lCudaDevice = new CudaDevice(0);
-				CudaContext lCudaContext = new CudaContext(lCudaDevice, false);
-				CudaHostPointer lCudaHostPointer1 = CudaHostPointer.mallocPinned(lLength * Sizeof.FLOAT);
-				CudaHostPointer lCudaHostPointer2 = CudaHostPointer.mallocPinned(lLength * Sizeof.FLOAT) )
+		final CudaDevice lCudaDevice = new CudaDevice(0);
+		final CudaContext lCudaContext = new CudaContext(	lCudaDevice,
+																											false);
+		final CudaHostPointer lCudaHostPointer1 = CudaHostPointer.mallocPinned(lLength * Sizeof.FLOAT);
+		final CudaHostPointer lCudaHostPointer2 = CudaHostPointer.mallocPinned(lLength * Sizeof.FLOAT);
+		try
 		{
 
 			final CudaMemory lCudaMemory1 = new CudaMemory(lCudaHostPointer1);
 			final CudaMemory lCudaMemory2 = new CudaMemory(lCudaHostPointer2);
 
-
 			ContiguousMemoryTestsHelper.testBasics(	lCudaMemory1,
 																							MemoryType.CPURAMGPUMAPPED,
 																							false);
-			
-			ContiguousMemoryTestsHelper.testCopyChecks(lCudaMemory1, lCudaMemory2);
-			
+
+			ContiguousMemoryTestsHelper.testCopyChecks(	lCudaMemory1,
+																									lCudaMemory2);
+
 			ContiguousMemoryTestsHelper.testWriteRead(lCudaMemory1);
 
+		}
+		finally
+		{
+			lCudaHostPointer2.close();
+			lCudaHostPointer1.close();
+			lCudaContext.close();
+			lCudaDevice.close();
 		}
 
 	}

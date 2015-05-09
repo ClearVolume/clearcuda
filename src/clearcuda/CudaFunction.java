@@ -13,7 +13,7 @@ public class CudaFunction implements HasPeer<CUfunction>
 {
 
 	private final String mFunctionName;
-	private CUfunction mCUfunction;
+	private final CUfunction mCUfunction;
 
 	private int mGridDimX, mGridDimY, mGridDimZ, mBlockDimX,
 			mBlockDimY, mBlockDimZ, mSharedMemoryBytes;
@@ -29,7 +29,7 @@ public class CudaFunction implements HasPeer<CUfunction>
 	{
 		mFunctionName = pFunctionName;
 		mCUfunction = new CUfunction();
-		int lCuModuleGetFunction = cuModuleGetFunction(	mCUfunction,
+		final int lCuModuleGetFunction = cuModuleGetFunction(	mCUfunction,
 																										pCudaModule.getPeer(),
 																										pFunctionName);
 		System.out.println(lCuModuleGetFunction);
@@ -73,13 +73,13 @@ public class CudaFunction implements HasPeer<CUfunction>
 	public Pointer[] launch(Object... pParameters)
 	{
 		final int lNumberOfParameters = pParameters.length;
-		Pointer[] lNativePointerObjectArray = new Pointer[lNumberOfParameters];
+		final Pointer[] lNativePointerObjectArray = new Pointer[lNumberOfParameters];
 		for (int i = 0; i < lNumberOfParameters; i++)
 		{
-			Pointer lParameterPointer = convertParameter(pParameters[i]);
+			final Pointer lParameterPointer = convertParameter(pParameters[i]);
 			lNativePointerObjectArray[i] = lParameterPointer;
 		}
-		Pointer lKernerlParametersPointer = Pointer.to(lNativePointerObjectArray);
+		final Pointer lKernerlParametersPointer = Pointer.to(lNativePointerObjectArray);
 
 		cuLaunchKernel(	getPeer(),
 										mGridDimX,
@@ -104,25 +104,25 @@ public class CudaFunction implements HasPeer<CUfunction>
 			return Pointer.to(((CudaDevicePointer) pObject).getPeer());
 		if (pObject instanceof Byte)
 			return Pointer.to(new byte[]
-			{ (byte) pObject });
+			{ (Byte) pObject });
 		if (pObject instanceof Character)
 			return Pointer.to(new char[]
-			{ (char) pObject });
+			{ (Character) pObject });
 		if (pObject instanceof Short)
 			return Pointer.to(new short[]
-			{ (short) pObject });
+			{ (Short) pObject });
 		if (pObject instanceof Integer)
 			return Pointer.to(new int[]
-			{ (int) pObject });
+			{ (Integer) pObject });
 		if (pObject instanceof Long)
 			return Pointer.to(new long[]
-			{ (long) pObject });
+			{ (Long) pObject });
 		if (pObject instanceof Float)
 			return Pointer.to(new float[]
-			{ (float) pObject });
+			{ (Float) pObject });
 		if (pObject instanceof Double)
 			return Pointer.to(new double[]
-			{ (double) pObject });
+			{ (Double) pObject });
 		if (pObject instanceof byte[])
 			return Pointer.to((byte[]) pObject);
 		if (pObject instanceof char[])

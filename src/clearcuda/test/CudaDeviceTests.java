@@ -21,9 +21,11 @@ public class CudaDeviceTests
 
 		System.out.println("CudaDevice.getNumberOfCudaDevices()=" + CudaDevice.getNumberOfCudaDevices());
 		for (int lDeviceId = 0; lDeviceId < CudaDevice.getNumberOfCudaDevices(); lDeviceId++)
-			try (CudaDevice lCudaDevice = new CudaDevice(lDeviceId);
-					CudaContext lCudaContext = new CudaContext(	lCudaDevice,
-																											false))
+		{
+			final CudaDevice lCudaDevice = new CudaDevice(lDeviceId);
+			final CudaContext lCudaContext = new CudaContext(	lCudaDevice,
+																												false);
+			try
 			{
 				System.out.println("________________________________________________");
 				System.out.println("CudaDevice " + lCudaDevice);
@@ -47,6 +49,12 @@ public class CudaDeviceTests
 				System.out.println("MannagedAllocation=" + lCudaDevice.getAttribute(CUdevice_attribute.CU_DEVICE_ATTRIBUTE_MANAGED_MEMORY));
 				System.out.println(" ");
 			}
+			finally
+			{
+				lCudaContext.close();
+				lCudaDevice.close();
+			}
+		}
 		/**/
 	}
 }

@@ -21,9 +21,11 @@ public class CudaHostPointerTests
 
 		final int lLength = 128 * 129 * 130;
 
-		try (CudaDevice lCudaDevice = new CudaDevice(0);
-				CudaContext lCudaContext = new CudaContext(lCudaDevice, false);
-				CudaHostPointer lCudaHostPointer = CudaHostPointer.mallocPinned(lLength * Sizeof.FLOAT))
+		final CudaDevice lCudaDevice = new CudaDevice(0);
+		final CudaContext lCudaContext = new CudaContext(	lCudaDevice,
+																											false);
+		final CudaHostPointer lCudaHostPointer = CudaHostPointer.mallocPinned(lLength * Sizeof.FLOAT);
+		try
 		{
 			final float[] lFloatsIn = new float[lLength];
 			lFloatsIn[lLength / 2] = 123;
@@ -32,6 +34,12 @@ public class CudaHostPointerTests
 			final float[] lFloatsOut = new float[lLength];
 			lCudaHostPointer.copyTo(lFloatsOut, true);
 			assertEquals(123, lFloatsOut[lLength / 2], 0);
+		}
+		finally
+		{
+			lCudaHostPointer.close();
+			lCudaContext.close();
+			lCudaDevice.close();
 		}
 	}
 

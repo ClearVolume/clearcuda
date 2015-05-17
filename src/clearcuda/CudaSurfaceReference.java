@@ -25,6 +25,7 @@ public class CudaSurfaceReference implements HasPeer<CUsurfref>
 		cuSurfRefSetArray(mCUsurfref, pCudaArray.getPeer(), 0);
 	}
 
+	@Override
 	public CUsurfref getPeer()
 	{
 		return mCUsurfref;

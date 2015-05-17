@@ -19,9 +19,9 @@ import jcuda.driver.CUmemorytype;
 import jcuda.driver.CUresult;
 import coremem.interfaces.HasPeer;
 
-public class CudaArray extends CopyFromToBase implements
-																									CudaCloseable,
-																									HasPeer<CUarray>
+public class CudaArray extends CopyFromToBase	implements
+																							CudaCloseable,
+																							HasPeer<CUarray>
 
 {
 
@@ -328,7 +328,5 @@ public class CudaArray extends CopyFromToBase implements
 	{
 		return mSurfaceEnabled;
 	}
-
-
 
 }

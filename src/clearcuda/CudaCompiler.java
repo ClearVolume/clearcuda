@@ -222,7 +222,7 @@ public class CudaCompiler
 			public FileVisitResult visitFile(	final Path file,
 																				final BasicFileAttributes attrs) throws IOException
 			{
-				if (file.getFileName().endsWith(".ptx"))
+				if (file != null && file.getFileName().endsWith(".ptx"))
 					Files.delete(file);
 				return FileVisitResult.CONTINUE;
 			}

@@ -57,19 +57,19 @@ public class CudaMemoryTests
 		try (CudaDevice lCudaDevice = new CudaDevice(0);
 				CudaContext lCudaContext = new CudaContext(lCudaDevice, false);
 				CudaHostPointer lCudaHostPointer1 = CudaHostPointer.mallocPinned(lLength * Sizeof.FLOAT);
-				CudaHostPointer lCudaHostPointer2 = CudaHostPointer.mallocPinned(lLength * Sizeof.FLOAT) )
+				CudaHostPointer lCudaHostPointer2 = CudaHostPointer.mallocPinned(lLength * Sizeof.FLOAT))
 		{
 
 			final CudaMemory lCudaMemory1 = new CudaMemory(lCudaHostPointer1);
 			final CudaMemory lCudaMemory2 = new CudaMemory(lCudaHostPointer2);
 
-
 			ContiguousMemoryTestsHelper.testBasics(	lCudaMemory1,
 																							MemoryType.CPURAMGPUMAPPED,
 																							false);
-			
-			ContiguousMemoryTestsHelper.testCopyChecks(lCudaMemory1, lCudaMemory2);
-			
+
+			ContiguousMemoryTestsHelper.testCopyChecks(	lCudaMemory1,
+																									lCudaMemory2);
+
 			ContiguousMemoryTestsHelper.testWriteRead(lCudaMemory1);
 
 		}

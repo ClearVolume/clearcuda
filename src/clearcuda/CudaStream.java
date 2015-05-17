@@ -18,25 +18,26 @@ public class CudaStream implements CudaCloseable, HasPeer<CUstream>
 {
 
 	private CUstream mCUStream;
-	private int mPriority;
+	private final int mPriority;
 
 	public CudaStream(double pPriorityNormalized)
 	{
 		super();
-		int lFlags = CUstream_flags.CU_STREAM_NON_BLOCKING;
+		final int lFlags = CUstream_flags.CU_STREAM_NON_BLOCKING;
 
-		int[] lPriorityRange = getPriorityRange();
+		final int[] lPriorityRange = getPriorityRange();
 
 		mPriority = (int) round(lPriorityRange[0] + pPriorityNormalized
 														* (lPriorityRange[1] - lPriorityRange[0]));
 
+		mCUStream = new CUstream();
 		cuStreamCreateWithPriority(mCUStream, lFlags, mPriority);
 	}
 
 	private static int[] getPriorityRange()
 	{
-		int[] lMinPriority = new int[1];
-		int[] lMaxPriority = new int[1];
+		final int[] lMinPriority = new int[1];
+		final int[] lMaxPriority = new int[1];
 		cuCtxGetStreamPriorityRange(lMinPriority, lMaxPriority);
 		return new int[]
 		{ lMinPriority[0], lMaxPriority[0] };
@@ -44,7 +45,7 @@ public class CudaStream implements CudaCloseable, HasPeer<CUstream>
 
 	public boolean isReady()
 	{
-		int lCuStreamQuery = cuStreamQuery(mCUStream);
+		final int lCuStreamQuery = cuStreamQuery(mCUStream);
 		if (lCuStreamQuery == CUresult.CUDA_SUCCESS)
 			return true;
 		return false;
@@ -57,7 +58,7 @@ public class CudaStream implements CudaCloseable, HasPeer<CUstream>
 
 	public void attach(CudaDevicePointer pCudaDevicePointer)
 	{
-		int lFlags = CUmemAttach_flags.CU_MEM_ATTACH_SINGLE;
+		final int lFlags = CUmemAttach_flags.CU_MEM_ATTACH_SINGLE;
 		cuStreamAttachMemAsync(	mCUStream,
 														pCudaDevicePointer.getPeer(),
 														pCudaDevicePointer.getSizeInBytes(),
@@ -74,6 +75,7 @@ public class CudaStream implements CudaCloseable, HasPeer<CUstream>
 		}
 	}
 
+	@Override
 	public CUstream getPeer()
 	{
 		return mCUStream;

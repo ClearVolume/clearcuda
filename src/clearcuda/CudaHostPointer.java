@@ -20,7 +20,6 @@ public class CudaHostPointer extends CudaDevicePointer
 
 	private boolean mFastGPUWriteButSlowCPURead;
 
-
 	public static CudaHostPointer mallocPinned(long pSizeInBytes)
 	{
 		return mallocPinned(pSizeInBytes, true, false);
@@ -31,9 +30,10 @@ public class CudaHostPointer extends CudaDevicePointer
 																							boolean pFastGPUWriteButSlowCPURead)
 	{
 
-		final int lGPUMappedFlag = pGPUMapped ? CU_MEMHOSTALLOC_DEVICEMAP : 0;
+		final int lGPUMappedFlag = pGPUMapped	? CU_MEMHOSTALLOC_DEVICEMAP
+																					: 0;
 		final int lFastGPUWriteButSlowCPURead = pFastGPUWriteButSlowCPURead	? CU_MEMHOSTALLOC_WRITECOMBINED
-																																	: 0;
+																																				: 0;
 		final int lFlags = CU_MEMHOSTALLOC_PORTABLE | lGPUMappedFlag
 												| lFastGPUWriteButSlowCPURead;
 
@@ -42,12 +42,11 @@ public class CudaHostPointer extends CudaDevicePointer
 																								pSizeInBytes,
 																								lFlags);
 
-
 		final CudaHostPointer lCudaHostPointer = new CudaHostPointer(	true,
-																														lPointer,
-																														pSizeInBytes,
-																														pGPUMapped,
-																														pFastGPUWriteButSlowCPURead);
+																																	lPointer,
+																																	pSizeInBytes,
+																																	pGPUMapped,
+																																	pFastGPUWriteButSlowCPURead);
 
 		return lCudaHostPointer;
 	}
@@ -56,14 +55,15 @@ public class CudaHostPointer extends CudaDevicePointer
 																							long pSizeInBytes,
 																							boolean pGPUMapped)
 	{
-		final int lGPUMappedFlag = pGPUMapped ? CU_MEMHOSTALLOC_DEVICEMAP : 0;
+		final int lGPUMappedFlag = pGPUMapped	? CU_MEMHOSTALLOC_DEVICEMAP
+																					: 0;
 		final int lFlags = lGPUMappedFlag;
 		cuMemHostRegister(pPointer, pSizeInBytes, lFlags);
 
 		final CudaHostPointer lCudaHostPointer = new CudaHostPointer(	false,
-																														pPointer,
-																														pSizeInBytes,
-																														pGPUMapped);
+																																	pPointer,
+																																	pSizeInBytes,
+																																	pGPUMapped);
 		return lCudaHostPointer;
 	}
 
@@ -108,6 +108,5 @@ public class CudaHostPointer extends CudaDevicePointer
 	{
 		return mPointer;
 	}
-
 
 }

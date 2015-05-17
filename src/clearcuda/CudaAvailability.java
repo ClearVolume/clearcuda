@@ -1,11 +1,11 @@
 package clearcuda;
 
-import clearcuda.test.CudaCompilerTests;
-import clearcuda.utils.NVCC;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
-import static org.junit.Assert.assertEquals;
+import clearcuda.test.CudaCompilerTests;
+import clearcuda.utils.NVCC;
 
 public class CudaAvailability
 {

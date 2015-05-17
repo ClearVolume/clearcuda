@@ -96,7 +96,7 @@ public class CudaDevice implements CudaCloseable
 	/**
 	 * @param pAttribute
 	 *          attributes defined in class CUdevice_attribute
-	 * @return
+	 * @return attribute value
 	 */
 	public int getAttribute(int pAttribute)
 	{
@@ -151,6 +151,5 @@ public class CudaDevice implements CudaCloseable
 			mCUdevice = null;
 		}
 	}
-
 
 }

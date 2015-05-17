@@ -112,8 +112,7 @@ public abstract class CopyFromToBase
 		pContiguousMemoryInterface.complainIfFreed();
 		final Pointer lPointTo = JCudaPointerUtils.pointTo(pContiguousMemoryInterface);
 		// final long lStartNs = System.nanoTime();
-		copyFrom(	lPointTo,
-							pSync);
+		copyFrom(lPointTo, pSync);
 		// final long lStopNs = System.nanoTime();
 		// System.out.println("ELPASED:" + (lStopNs - lStartNs) / 1.0e6);
 		pContiguousMemoryInterface.complainIfFreed();
@@ -124,11 +123,8 @@ public abstract class CopyFromToBase
 	{
 		pContiguousMemoryInterface.complainIfFreed();
 		final Pointer lPointTo = JCudaPointerUtils.pointTo(pContiguousMemoryInterface);
-		copyTo(lPointTo,
-						pSync);
+		copyTo(lPointTo, pSync);
 		pContiguousMemoryInterface.complainIfFreed();
 	}
-
-
 
 }

@@ -67,6 +67,7 @@ public class CudaModule implements CudaCloseable, HasPeer<CUmodule>
 		return lCudaGlobal;
 	}
 
+	@Override
 	public CUmodule getPeer()
 	{
 		return mCUmodule;

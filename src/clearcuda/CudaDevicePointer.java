@@ -21,33 +21,31 @@ import coremem.interfaces.CopyableWithSync;
 import coremem.interfaces.HasPeer;
 import coremem.interfaces.PointerAccessible;
 
-public class CudaDevicePointer extends CopyFromToBase implements
-																													CudaCloseable,
-																													HasPeer<CUdeviceptr>,
-																													PointerAccessible,
-																													Copyable<CudaDevicePointer>,
-																													CopyableWithSync<CudaDevicePointer>
+public class CudaDevicePointer extends CopyFromToBase	implements
+																											CudaCloseable,
+																											HasPeer<CUdeviceptr>,
+																											PointerAccessible,
+																											Copyable<CudaDevicePointer>,
+																											CopyableWithSync<CudaDevicePointer>
 {
 
 	protected CUdeviceptr mCUdeviceptr;
 	protected long mSizeInBytes;
 	protected boolean mExternallyAllocated;
 
-
 	public static final CudaDevicePointer malloc(final long pSizeInBytes)
 	{
 		final CudaDevicePointer lCudaDevicePointer = new CudaDevicePointer(	false,
-																																	pSizeInBytes);
+																																				pSizeInBytes);
 
 		cuMemAlloc(lCudaDevicePointer.getPeer(), pSizeInBytes);
 		return lCudaDevicePointer;
 	}
 
-
 	public static final CudaDevicePointer mallocManaged(final long pSizeInBytes)
 	{
 		final CudaDevicePointer lCudaDevicePointer = new CudaDevicePointer(	false,
-																																	pSizeInBytes);
+																																				pSizeInBytes);
 		final int lFlags = CUmemAttach_flags.CU_MEM_ATTACH_GLOBAL;
 		cuMemAllocManaged(lCudaDevicePointer.getPeer(),
 											pSizeInBytes,
@@ -70,7 +68,6 @@ public class CudaDevicePointer extends CopyFromToBase implements
 		this(pExternallyAllocated, 0);
 	}
 
-
 	public void setSingleFloat(float pFloat)
 	{
 		copyFrom(Pointer.to(new float[]
@@ -83,20 +80,28 @@ public class CudaDevicePointer extends CopyFromToBase implements
 		{ pDouble }), true);
 	}
 
-	public void setSingleByte(byte pByte) {
-		copyFrom(Pointer.to(new byte[] { pByte }), true);
+	public void setSingleByte(byte pByte)
+	{
+		copyFrom(Pointer.to(new byte[]
+		{ pByte }), true);
 	}
 
-	public void setSingleChar(char pChar) {
-		copyFrom(Pointer.to(new char[] { pChar }), true);
+	public void setSingleChar(char pChar)
+	{
+		copyFrom(Pointer.to(new char[]
+		{ pChar }), true);
 	}
 
-	public void setSingleShort(short pShort) {
-		copyFrom(Pointer.to(new short[] { pShort }), true);
+	public void setSingleShort(short pShort)
+	{
+		copyFrom(Pointer.to(new short[]
+		{ pShort }), true);
 	}
 
-	public void setSingleInt(int pInt) {
-		copyFrom(Pointer.to(new int[] { pInt }), true);
+	public void setSingleInt(int pInt)
+	{
+		copyFrom(Pointer.to(new int[]
+		{ pInt }), true);
 
 	}
 
@@ -160,16 +165,16 @@ public class CudaDevicePointer extends CopyFromToBase implements
 			cuCtxSynchronize();
 	}
 
-
 	public void fillFloat(float pValue, boolean pSync)
 	{
-		cuMemsetD32Async(mCUdeviceptr, Float.floatToIntBits(pValue),
-				mSizeInBytes / 4, null);
+		cuMemsetD32Async(	mCUdeviceptr,
+											Float.floatToIntBits(pValue),
+											mSizeInBytes / 4,
+											null);
 
 		if (pSync)
 			cuCtxSynchronize();
 	}
-
 
 	public void fillInt(int pValue, boolean pSync)
 
@@ -179,7 +184,6 @@ public class CudaDevicePointer extends CopyFromToBase implements
 			cuCtxSynchronize();
 	}
 
-
 	public void fillShort(short pValue, boolean pSync)
 
 	{
@@ -187,7 +191,6 @@ public class CudaDevicePointer extends CopyFromToBase implements
 		if (pSync)
 			cuCtxSynchronize();
 	}
-
 
 	public void fillByte(byte pValue, boolean pSync)
 
@@ -198,7 +201,8 @@ public class CudaDevicePointer extends CopyFromToBase implements
 	}
 
 	@Override
-	public CUdeviceptr getPeer() {
+	public CUdeviceptr getPeer()
+	{
 
 		return mCUdeviceptr;
 	}
@@ -230,7 +234,5 @@ public class CudaDevicePointer extends CopyFromToBase implements
 	{
 		return "CudaDevicePointer [mSizeInBytes=" + mSizeInBytes + "]";
 	}
-
-
 
 }

@@ -57,7 +57,7 @@ dependencies
 	testCompile group: 'junit', name: 'junit', version: '4.12'
 
 	compile group: "net.coremem", name: "CoreMem", version: "(,1.0.0]", changing: true, transitive:true
-	compile group: "de.jcuda", name: "jcuda-maven", version: "6.5", transitive: true
+	compile group: "de.jcuda", name: "jcuda-maven", version: "7.5", transitive: true
 
 }
 
